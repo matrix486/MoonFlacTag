@@ -1,0 +1,31 @@
+{
+  "material_date": "2026-10-17",
+  "toolchain": "moon 0.1.20260915 (2e1a46d 2026-09-15) ~\\.moon\\bin\\moon.exe\nmoonc v0.10.13+cbb11c36f (2026-09-15) ~\\.moon\\bin\\moonc.exe\nmoonrun 0.1.20260915 (2e1a46d 2026-09-15) ~\\.moon\\bin\\moonrun.exe\n\nFeature flags enabled: rr_moon_mod,rr_moon_pkg",
+  "ffmpeg": "ffmpeg version 2026-03-09-git-9b7439c31b-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+  "node": "v24.19.0",
+  "checks": {
+    "moon fmt --check": "Finished. moon: ran 12 tasks, now up to date",
+    "moon check --target wasm-gc --warn-list +73 --deny-warn": "Finished. moon: ran 2 tasks, now up to date",
+    "moon test --target wasm-gc --deny-warn": "Total tests: 16, passed: 16, failed: 0.",
+    "moon build --target wasm-gc --deny-warn": "Finished. moon: ran 1 task, now up to date",
+    "moon check --target js --warn-list +73 --deny-warn": "Finished. moon: ran 4 tasks, now up to date",
+    "moon test --target js --deny-warn": "Total tests: 16, passed: 16, failed: 0.",
+    "moon build --target js --deny-warn": "Finished. moon: ran 3 tasks, now up to date",
+    "moon info --target wasm-gc": "Finished. moon: ran 4 tasks, now up to date"
+  },
+  "media": {
+    "sample_rate": 44100,
+    "channels": 1,
+    "samples": 11025,
+    "compressed_audio_bytes": 3158,
+    "decoded_pcm_bytes": 22050,
+    "original_audio_offset": 8333,
+    "preserved_audio_offset": 8333,
+    "compressed_audio_identical": true,
+    "decoded_pcm_identical": true,
+    "ffprobe_tags_match": true,
+    "cover_extracted_identical": true,
+    "unknown_block_preserved": true,
+    "cli_error_paths": "passed"
+  }
+}
