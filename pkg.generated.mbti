@@ -1,0 +1,93 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "local/moonflactag"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn decode_comments(Bytes) -> Comments raise FlacError
+
+pub fn decode_picture(Bytes) -> Picture raise FlacError
+
+pub fn encode_comments(Comments) -> Bytes raise FlacError
+
+pub fn encode_picture(Picture) -> Bytes raise FlacError
+
+pub fn parse(Bytes, max_metadata? : Int) -> Document raise FlacError
+
+// Errors
+pub(all) suberror FlacError {
+  Invalid(Int, String)
+  Limit(String)
+  NoSpace(Int)
+} derive(@debug.Debug)
+
+// Types and methods
+pub(all) struct Block {
+  kind : Int
+  data : Bytes
+} derive(Eq, @debug.Debug)
+
+pub(all) struct Comment {
+  key : String
+  value : String
+} derive(Eq, ToJson, @debug.Debug)
+
+pub(all) struct Comments {
+  vendor : String
+  entries : Array[Comment]
+} derive(Eq, ToJson, @debug.Debug)
+pub fn Comments::values(Self, String) -> Array[String]
+
+pub struct Document {
+  // private fields
+} derive(@debug.Debug)
+pub fn Document::audio_bytes(Self) -> Bytes
+pub fn Document::audio_offset(Self) -> Int
+pub fn Document::blocks(Self) -> Array[Block]
+pub fn Document::comments(Self) -> Comments raise FlacError
+pub fn Document::pictures(Self) -> Array[Picture] raise FlacError
+pub fn Document::rewrite(Self, Array[TagEdit], pictures? : Array[Picture], padding? : Padding) -> RewriteResult raise FlacError
+pub fn Document::stream_info(Self) -> StreamInfo raise FlacError
+
+pub(all) enum Padding {
+  Compact
+  Exact(Int)
+  PreserveOffset
+} derive(Eq, @debug.Debug)
+
+pub(all) struct Picture {
+  kind : Int
+  media_type : String
+  description : String
+  width : UInt
+  height : UInt
+  depth : UInt
+  colors : UInt
+  data : Bytes
+} derive(Eq, @debug.Debug)
+
+pub(all) struct RewriteResult {
+  bytes : Bytes
+  old_audio_offset : Int
+  audio_offset : Int
+} derive(@debug.Debug)
+
+pub(all) struct StreamInfo {
+  sample_rate : Int
+  channels : Int
+  bits_per_sample : Int
+  total_samples : Int64
+  md5 : Bytes
+} derive(Eq, ToJson, @debug.Debug)
+
+pub(all) enum TagEdit {
+  Set(String, String)
+  Add(String, String)
+  Remove(String)
+} derive(Eq, @debug.Debug)
+
+// Type aliases
+
+// Traits

@@ -1,0 +1,7 @@
+supported_targets = "js"
+
+import {
+  "local/moonflactag" @flac,
+}
+
+pkgtype(kind: "executable")
