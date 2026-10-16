@@ -10,3 +10,4 @@ __pycache__/
 .github/
 .local-ledger.md
 output/
+docs/test-evidence/package-consumption.json
