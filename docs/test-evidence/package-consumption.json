@@ -1,13 +1,14 @@
 {
-  "material_date": "2026-10-17",
-  "archive": "local-moonflactag-0.1.0.zip",
-  "file_count": 32,
-  "archive_bytes": 42374,
+  "material_date": "2026-10-19",
+  "version": "0.2.0",
+  "archive": "local-moonflactag-0.2.0.zip",
+  "file_count": 46,
+  "archive_bytes": 60035,
   "consumers": {
     "wasm-gc": "Total tests: 1, passed: 1, failed: 0.",
     "js": "Total tests: 1, passed: 1, failed: 0."
   },
-  "extracted_cli": "passed",
+  "extracted_cli": "inspect and plan passed",
   "distribution_exclusions": "passed",
-  "packaging_output": "Warning: 'repository' field is not set or empty in module manifest\nRunning moon check ...\nFinished. moon: no work to do\nCheck passed\nPackage to <project>\\_build\\publish\\local-moonflactag-0.1.0.zip"
+  "packaging_output": "Warning: 'repository' field is not set or empty in module manifest\nRunning moon check ...\nFinished. moon: no work to do\nCheck passed\nPackage to <project>\\_build\\publish\\local-moonflactag-0.2.0.zip"
 }

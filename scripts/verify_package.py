@@ -1,6 +1,7 @@
 """Consume actual moon package output from an isolated local module."""
 from pathlib import Path
 import json
+import re
 import subprocess
 import tempfile
 import zipfile
@@ -16,8 +17,9 @@ def run(args, cwd):
 
 
 def main():
+    version = re.search(r'^version\s*=\s*"([^"]+)"', (ROOT / "moon.mod").read_text(encoding="utf-8"), re.M)[1]
     packaging = run(["moon", "package"], ROOT)
-    archive = ROOT / "_build/publish/local-moonflactag-0.1.0.zip"
+    archive = ROOT / f"_build/publish/local-moonflactag-{version}.zip"
     work = ROOT / "release-local"
     work.mkdir(exist_ok=True)
     with zipfile.ZipFile(archive) as z:
@@ -39,7 +41,7 @@ def main():
             consumer = tmp / "consumer"
             consumer.mkdir()
             (tmp / "moon.work").write_text('members = ["library", "consumer"]\n', encoding="utf-8")
-            (consumer / "moon.mod").write_text('name = "local/flactag_consumer"\nversion = "0.0.1"\nimport { "local/moonflactag@0.1.0" }\n', encoding="utf-8")
+            (consumer / "moon.mod").write_text(f'name = "local/flactag_consumer"\nversion = "0.0.1"\nimport {{ "local/moonflactag@{version}" }}\n', encoding="utf-8")
             (consumer / "moon.pkg").write_text('import { "local/moonflactag" @flac } for "test"\n', encoding="utf-8")
             fixture = (ROOT / "fixtures/tone.flac").read_bytes()
             literal = 'b"' + ''.join(f'\\x{b:02x}' for b in fixture) + '"'
@@ -53,6 +55,10 @@ test "independent archive consumer" {
   assert_eq(parsed.audio_bytes(), doc.audio_bytes())
   assert_eq(changed.audio_offset, doc.audio_offset())
   assert_eq(parsed.stream_info().total_samples, 11025L)
+  let prefix = INPUT[:doc.audio_offset()].to_owned()
+  let plan = @flac.plan_metadata(prefix, [Set("TITLE", "Archive consumer"), Add("ARTIST", "A"), Add("ARTIST", "B")])
+  assert_eq(plan.metadata + doc.audio_bytes(), changed.bytes)
+  assert_eq(plan.old_audio_offset, doc.audio_offset())
 }
 '''.replace("INPUT", literal)
             (consumer / "consumer_test.mbt").write_text(source, encoding="utf-8")
@@ -62,7 +68,9 @@ test "independent archive consumer" {
             cli_result = subprocess.run(["moon", "run", "cmd/main", "--target", "js", "--", "inspect", str(library / "fixtures/tone.flac")], cwd=library, capture_output=True, check=True)
             output = json.loads(cli_result.stdout)
             assert output["stream"]["total_samples"] == "11025"
-    result = {"material_date": "2026-10-17", "archive": archive.name, "file_count": len(entries), "archive_bytes": archive.stat().st_size, "consumers": results, "extracted_cli": "passed", "distribution_exclusions": "passed", "packaging_output": packaging.replace(str(ROOT), "<project>")}
+            planned = subprocess.run(["moon", "run", "cmd/main", "--target", "js", "--", "plan", str(library / "fixtures/tone.flac"), "--set=TITLE=Packaged preview"], cwd=library, capture_output=True, check=True)
+            assert json.loads(planned.stdout)["preview"] is True
+    result = {"material_date": "2026-10-19", "version": version, "archive": archive.name, "file_count": len(entries), "archive_bytes": archive.stat().st_size, "consumers": results, "extracted_cli": "inspect and plan passed", "distribution_exclusions": "passed", "packaging_output": packaging.replace(str(ROOT), "<project>")}
     (ROOT / "docs/test-evidence/package-consumption.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, indent=2))
 

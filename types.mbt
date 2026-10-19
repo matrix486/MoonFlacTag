@@ -74,3 +74,12 @@ pub(all) struct RewriteResult {
   old_audio_offset : Int
   audio_offset : Int
 } derive(Debug)
+
+///|
+/// The replacement prefix only; copy the source suffix from old_audio_offset.
+/// This value does not contain audio bytes and is suitable for streaming hosts.
+pub(all) struct RewritePlan {
+  metadata : Bytes
+  old_audio_offset : Int
+  audio_offset : Int
+} derive(Debug)

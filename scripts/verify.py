@@ -5,6 +5,8 @@ import shutil
 import struct
 import subprocess
 import zlib
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "demo-output" / "verification"
@@ -143,12 +145,18 @@ def main():
     assert cli("edit", original, OUT / "no-space.flac", "--set=TITLE=" + "x" * 12000, ok=False).returncode != 0
     assert not (OUT / "no-space.flac").exists()
     assert original.read_bytes() == source
+    outputs = {}
+    for target in ["wasm-gc", "js"]:
+        outputs[target] = run("moon", "run", "examples/plan", "--target", target).stdout
+    assert outputs["wasm-gc"] == outputs["js"]
+    assert outputs["js"].startswith(b"664c6143")
     result = {
-        "material_date": "2026-10-17",
-        "toolchain": run("moon", "version", "--all").stdout.decode().strip(),
+        "material_date": datetime.now(ZoneInfo("Asia/Shanghai")).date().isoformat(),
+        "toolchain": run("moon", "version", "--all", "--no-path").stdout.decode().strip(),
         "ffmpeg": run("ffmpeg", "-version").stdout.decode().splitlines()[0],
         "node": run("node", "--version").stdout.decode().strip(),
         "checks": checks,
+        "cross_backend_plan_output_identical": True,
         "media": {"sample_rate": 44100, "channels": 1, "samples": 11025, "compressed_audio_bytes": len(audio), "decoded_pcm_bytes": len(expected_pcm), "original_audio_offset": boundary, "preserved_audio_offset": after["audio_offset"], "compressed_audio_identical": True, "decoded_pcm_identical": True, "ffprobe_tags_match": True, "cover_extracted_identical": True, "unknown_block_preserved": True, "cli_error_paths": "passed"},
     }
     (EVIDENCE / "local-verification.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

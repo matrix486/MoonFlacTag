@@ -45,6 +45,8 @@ pub fn parse(
   let r = { data, pos: 4, }
   let blocks : Array[Block] = []
   let mut comments_seen = false
+  let mut seektable_seen = false
+  let mut cuesheet_seen = false
   let mut icon1 = false
   let mut icon2 = false
   for ;; {
@@ -84,9 +86,14 @@ pub fn parse(
         }
       }
       3 => {
+        guard !seektable_seen else {
+          raise Invalid(r.pos, "duplicate SEEKTABLE")
+        }
+        seektable_seen = true
         guard size % 18 == 0 else {
           raise Invalid(r.pos, "SEEKTABLE size must be multiple of 18")
         }
+        validate_seektable(payload)
       }
       4 => {
         guard !comments_seen else {
@@ -105,6 +112,10 @@ pub fn parse(
           guard !icon2 else { raise Invalid(r.pos, "duplicate type 2 icon") }
           icon2 = true
         }
+      }
+      5 => {
+        guard !cuesheet_seen else { raise Invalid(r.pos, "duplicate CUESHEET") }
+        cuesheet_seen = true
       }
       _ => ()
     }
@@ -145,7 +156,7 @@ pub fn Document::comments(self : Document) -> Comments raise FlacError {
       return decode_comments(block.data)
     }
   }
-  { vendor: "MoonFlacTag/0.1.0", entries: [], }
+  { vendor: "MoonFlacTag/0.2.0", entries: [], }
 }
 
 ///|

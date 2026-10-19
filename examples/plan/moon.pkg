@@ -1,0 +1,6 @@
+import {
+  "local/moonflactag" @flac,
+  "moonbitlang/core/encoding/hex",
+}
+
+pkgtype(kind: "executable")

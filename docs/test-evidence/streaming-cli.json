@@ -1,0 +1,17 @@
+{
+  "material_date": "2026-10-19",
+  "preview_no_write": true,
+  "explicit_padding": true,
+  "json_error_cases": 6,
+  "host_faults": {
+    "short": "passed",
+    "write": "passed",
+    "zero": "passed",
+    "read": "passed",
+    "sync": "passed",
+    "mutate": "passed"
+  },
+  "large_synthetic_bytes": 268439553,
+  "large_suffix_compared_byte_for_byte": true,
+  "large_pair_removed_after_test": true
+}

@@ -1,0 +1,31 @@
+name: Acceptance
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install the verified MoonBit release
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s -- '0.10.13+cbb11c36f'
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+      - name: Install the independent media oracle
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Show toolchain
+        run: moon version --all --no-path
+      - name: All local gates
+        run: python scripts/acceptance.py
+      - name: Public API is current
+        run: git diff --exit-code -- pkg.generated.mbti examples/plan/pkg.generated.mbti

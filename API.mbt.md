@@ -20,3 +20,24 @@ test "documented editing workflow" {
   assert_eq(doc.comments().entries.length(), 0)
 }
 ```
+
+流式宿主只需提供到最后元数据块为止的精确前缀，并按计划复制原文件音频后缀。
+
+```mbt check
+///|
+test "documented streaming prefix plan" {
+  let info = b"\x00\x10\x00\x10\x00\x00\x00\x00\x00\x00\x0a\xc4\x42\xf0\x00\x00\xac\x44" +
+    Bytes::make(16, b'\x00')
+  let prefix = b"fLaC\x80\x00\x00\x22" + info
+  let plan = @moonflactag.plan_metadata(
+    prefix,
+    [Set("TITLE", "stream")],
+    padding=Compact,
+  )
+  assert_eq(plan.old_audio_offset, prefix.length())
+  assert_eq(plan.metadata.length(), plan.audio_offset)
+  assert_eq(@moonflactag.parse(plan.metadata).comments().values("title"), [
+    "stream",
+  ])
+}
+```

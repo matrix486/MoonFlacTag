@@ -16,6 +16,8 @@ pub fn encode_picture(Picture) -> Bytes raise FlacError
 
 pub fn parse(Bytes, max_metadata? : Int) -> Document raise FlacError
 
+pub fn plan_metadata(Bytes, Array[TagEdit], pictures? : Array[Picture], padding? : Padding) -> RewritePlan raise FlacError
+
 // Errors
 pub(all) suberror FlacError {
   Invalid(Int, String)
@@ -48,6 +50,7 @@ pub fn Document::audio_offset(Self) -> Int
 pub fn Document::blocks(Self) -> Array[Block]
 pub fn Document::comments(Self) -> Comments raise FlacError
 pub fn Document::pictures(Self) -> Array[Picture] raise FlacError
+pub fn Document::plan(Self, Array[TagEdit], pictures? : Array[Picture], padding? : Padding) -> RewritePlan raise FlacError
 pub fn Document::rewrite(Self, Array[TagEdit], pictures? : Array[Picture], padding? : Padding) -> RewriteResult raise FlacError
 pub fn Document::stream_info(Self) -> StreamInfo raise FlacError
 
@@ -67,6 +70,12 @@ pub(all) struct Picture {
   colors : UInt
   data : Bytes
 } derive(Eq, @debug.Debug)
+
+pub(all) struct RewritePlan {
+  metadata : Bytes
+  old_audio_offset : Int
+  audio_offset : Int
+} derive(@debug.Debug)
 
 pub(all) struct RewriteResult {
   bytes : Bytes

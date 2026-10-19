@@ -1,12 +1,13 @@
 ///|
-/// Build a new file. Omitted pictures preserves existing pictures; [] removes all.
+/// Plan replacement metadata without copying the audio suffix.
+/// Omitted pictures preserves existing pictures; [] removes all.
 /// PreserveOffset fails if the remaining budget is negative or 1..3 bytes.
-pub fn Document::rewrite(
+pub fn Document::plan(
   self : Document,
   edits : Array[TagEdit],
   pictures? : Array[Picture],
   padding? : Padding = PreserveOffset,
-) -> RewriteResult raise FlacError {
+) -> RewritePlan raise FlacError {
   let blocks : Array[Block] = []
   let new_comments = if edits.is_empty() {
     None
@@ -103,6 +104,40 @@ pub fn Document::rewrite(
     out.write_byte(n.to_byte())
     out.write_bytes(block.data)
   }
-  out.write_bytes(self.audio)
-  { bytes: out.to_bytes(), old_audio_offset: self.offset, audio_offset: size, }
+  {
+    metadata: out.to_bytes(),
+    old_audio_offset: self.offset,
+    audio_offset: size,
+  }
+}
+
+///|
+/// Build an in-memory file. Streaming hosts should use plan() instead.
+pub fn Document::rewrite(
+  self : Document,
+  edits : Array[TagEdit],
+  pictures? : Array[Picture],
+  padding? : Padding = PreserveOffset,
+) -> RewriteResult raise FlacError {
+  let plan = self.plan(edits, pictures?, padding~)
+  {
+    bytes: plan.metadata + self.audio,
+    old_audio_offset: plan.old_audio_offset,
+    audio_offset: plan.audio_offset,
+  }
+}
+
+///|
+/// Plan from an exact metadata prefix, rejecting accidental audio/trailing data.
+pub fn plan_metadata(
+  prefix : Bytes,
+  edits : Array[TagEdit],
+  pictures? : Array[Picture],
+  padding? : Padding = PreserveOffset,
+) -> RewritePlan raise FlacError {
+  let doc = parse(prefix)
+  guard doc.audio.is_empty() else {
+    raise Invalid(doc.offset, "plan_metadata requires an exact metadata prefix")
+  }
+  doc.plan(edits, pictures?, padding~)
 }

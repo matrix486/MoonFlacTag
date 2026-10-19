@@ -1,0 +1,46 @@
+{
+  "material_date": "2026-10-19",
+  "fixtures": "generated sine; not third-party recordings",
+  "cases": [
+    {
+      "sample_rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "pcm_s32le_bytes": 15876,
+      "audio_bytes": 1954,
+      "compressed_identical": true,
+      "decoded_identical": true,
+      "metadata_matches_ffprobe": true
+    },
+    {
+      "sample_rate": 48000,
+      "channels": 2,
+      "bits": 24,
+      "pcm_s32le_bytes": 69120,
+      "audio_bytes": 9842,
+      "compressed_identical": true,
+      "decoded_identical": true,
+      "metadata_matches_ffprobe": true
+    },
+    {
+      "sample_rate": 96000,
+      "channels": 2,
+      "bits": 16,
+      "pcm_s32le_bytes": 138240,
+      "audio_bytes": 4781,
+      "compressed_identical": true,
+      "decoded_identical": true,
+      "metadata_matches_ffprobe": true
+    },
+    {
+      "sample_rate": 48000,
+      "channels": 6,
+      "bits": 24,
+      "pcm_s32le_bytes": 207360,
+      "audio_bytes": 10494,
+      "compressed_identical": true,
+      "decoded_identical": true,
+      "metadata_matches_ffprobe": true
+    }
+  ]
+}
