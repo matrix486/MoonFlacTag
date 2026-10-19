@@ -29,3 +29,9 @@ MVP：native FLAC 文件签名与 STREAMINFO、重复 Vorbis comments 的大小�
 2026-10-17 通过官方 [App.tsx](https://github.com/moonbitlang/Hackathon2026/blob/main/src/App.tsx) 重核十月赛：10 月 31 日报名/验收截止，十月最多提交 3 次，每队不超过 3 人，公开持续开发、MoonBit 主体、可复现演示与测试、开源合规。JS 页面正文通过 raw GitHub 获取，原件在本地 research/rules.tsx。
 
 本次按用户指示仅本地交付。公开仓库、真实作者、Mooncakes namespace 和参赛者信息待指定；local/moonflactag 是开发占位名。本地 Git 使用中性身份保存真实阶段历史，尚无公开开发或报名记录。
+
+## 0.2.0 本地完善（2026-10-19）
+
+上文是 0.1.0 原始 MVP 方案。本次在相同项目边界内补齐 RewritePlan / Document.plan / plan_metadata，CLI 的 plan 预览和 --padding；文件层改为最多 16 MiB 前缀与 1 MiB 分块后缀复制，移除 256 MiB 整文件限制。普通读写/fsync 失败清理输出，源变化时拒绝保存。新增 seektable 顺序/placeholder 和单例块检查。累计元数据限制维持不变，内存 rewrite API 保持兼容。
+
+新增四组 FFmpeg 对照、268439553 bytes 合成大文件和六类宿主故障验证。两后端当前各 23 测试，含 2 文档测试；跨后端 plan 示例相同，实际 0.2.0 归档独立消费。新增 FLAC 解码库的读取能力已在生态报告中列明，编辑/写出仍为本项目独立贡献。具体范围和状态以 docs/acceptance-review.md 为准。

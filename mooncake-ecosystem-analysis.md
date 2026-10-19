@@ -16,3 +16,9 @@
 FLAC/Vorbis/taglib/ID3/metadata 同义词检索后，在本次索引范围未找到专门的纯 MoonBit FLAC 标签和封面编辑库；这不是全网不存在的证明。MoonFlacTag 增加的能力是无损元数据事务：大小端混合解析、重复标签语义、封面读写、填充预算、未知块与原音频 bytes 保留，提供跨 JS/Wasm-GC 的库，不绑定播放器。
 
 下载/依赖统计未取得一致可靠结果；源码活动另见 GitHub 调研。
+
+## 2026-10-19 针对性刷新
+
+继续开发时取得 3114 条当前 registry 元数据，按 FLAC / Vorbis / taglib / ID3 刷新相关候选，未重新声称逐个审阅全部源码。新增 [Xcsa-ee/moonflac@0.1.1](https://mooncakes.io/docs/Xcsa-ee/moonflac@0.1.1)，created_at=2026-10-18T10:01:54.117105；LL728/moonvorbis 更新为 0.1.4（2026-10-17T02:34:21.945041）。
+
+moonflac README 和 metadata_ext.mbt 实际提供 read_seektable / read_vorbis_comment / read_picture / read_application，不能再将 FLAC 元数据读取笼统声称为生态空白。其定位为解码和读取，未见标签/封面写出、padding 预算、前缀改写计划和文件保存 API。本项目独立价值收敛为编辑及写出，0.2.0 补上流式保存与预览；不复制解码器实现。源码对照见 GitHub 报告。

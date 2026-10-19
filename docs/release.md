@@ -1,20 +1,23 @@
-# 本地交付 0.1.0
+# 本地交付 0.2.0
 
-2026-10-17，MoonFlacTag 0.1.0。状态：仅本地保存。模块占位 `local/moonflactag`；公开仓库、Git 真实作者、Mooncakes namespace 与参赛者待指定。本地 Git 中性身份用于记录实际开发阶段。
+2026-10-19，模块 local/moonflactag，MIT。保留本地，GitHub owner/repo、真实作者、Mooncakes 账号/namespace 和参赛者资料待指定。
 
-交付包括纯 MoonBit 库、Node CLI、测试、可执行 API 文档、合成音频与封面、生态调研、复核报告、三分钟演示说明、申报草稿和一页 PDF。核心功能提交为 `883856c`，后续文档/验证提交以本地 Git 历史为准。
+本版新增元数据 RewritePlan、只读 plan 命令、分块文件保存、普通错误清理和源变化检测，补齐 seektable 顺序和 singleton 约束。详见 CHANGELOG。
 
-验证工具链：moon 0.1.20260915 (2e1a46d)、moonc v0.10.13+cbb11c36f、moonrun 0.1.20260915；Windows 上实测；Node v24.19.0。FFmpeg 2026-03-09-git-9b7439c31b 用于外部媒体对照。
+工具链：moon 0.1.20260915 (2e1a46d)、moonc v0.10.13+cbb11c36f、moonrun 0.1.20260915；Windows 上实测，Node v24.19.0。CI 准备使用官方 0.10.13+cbb11c36f 发行归档，对应 Linux 二进制及 core URL 已可访问。
 
-|范围|结果|
+|门槛|实际结果|
 |---|---|
-|Wasm-GC|check +73 / deny-warn、16 测试（含 1 文档测试）、build 通过|
-|JavaScript|check +73 / deny-warn、16 测试（含 1 文档测试）、build 通过|
-|媒体与 CLI|默认边界保持、标签读取、封面提取、未知块保留、压缩音频/PCM bytes 对照、错误退出与不覆盖路径通过|
-|本地归档|moon package 实际 zip，解压后 Wasm-GC/JS 各 1 消费测试、解压 CLI 调用通过|
+|Wasm-GC / JS|各 23 测试（含 2 文档测试）；fmt/check +73/deny-warn/build 通过|
+|跨后端示例|规划结果 stdout 相同|
+|真实媒体|原有素材加四组媒体，标签/封面/压缩音频/PCM 对照通过|
+|宿主 I/O|268439553 bytes 合成文件；六类故障注入通过|
+|实际分发|真实 zip 独立工作区双后端各 1 消费测试；解压 CLI inspect/plan 成功|
 
-完整数值见 [本地验证记录](test-evidence/local-verification.json)。归档消费脚本将当次的文件数、结果写入本地记录 `docs/test-evidence/package-consumption.json`；该记录按渠道排除规则不嵌入它自己所描述的库归档。实际归档位于 `_build/publish/local-moonflactag-0.1.0.zip`，本地可复跑。
+一键复现 python scripts/acceptance.py。详情见 docs/test-evidence 下的 local-verification.json、media-matrix.json、streaming-cli.json。package-consumption.json 记录当次实际文件数和 zip 大小，只留本地/Git，排除其自己描述的归档。
 
-打包预期含源码、公开接口、CLI 源码、必要 fixture、许可证、文档与复现脚本；排除 research/、release-local/、demo-output/、工具链/构建结果、Git 私有记录和 PDF。未指定 repository 导致的打包 metadata 提示如实保留，没有填造仓库 URL。
+归档：_build/publish/local-moonflactag-0.2.0.zip。含源代码、API、CLI 源码、素材、文档、验证脚本和许可；排除研究原件、大型中间素材、工具链、Git、私有台账、PDF、CI 配置。repository 未指定的打包提示如实保留，不填造 URL。
 
-公开发布、远端 CI、注册表安装、报名与官方审核均未执行。本地测试和消费结果不代表这些线上步骤完成。
+提交历史保留真实阶段：0.1.0 调研/核心/媒体验证/申报材料；0.2.0 的功能、验证和材料在本地继续提交，不补造公开日期。0.1.0 于 2026-10-17 本地完成、各后端 16 测试，属于历史结果。
+
+线上发布、远端 CI、registry 确切版本安装、正式报名与官方审核均未执行。CI 配置已准备，在公开阶段运行后再补正式证据。

@@ -7,3 +7,7 @@
 fixtures/tone.flac 是项目生成的 sine，cover.png 为项目生成色块，均随本项目 MIT 提供。测试里的合成 bytes 为原创结构 fixture。
 
 AI 辅助用于调研、设计、代码、测试与文档。参赛者仍需亲自理解核心边界、端序、长度校验、重复标签及 padding 规划；真实作者与报名信息待指定。中性本地 Git 身份不是参赛者身份。
+
+0.2.0 的额外多声道/24 bit 素材同样由 FFmpeg lavfi sine 现场生成，仅在忽略目录保存。268439553 bytes 大文件使用原元数据及合成零后缀，仅测试 I/O；比对后删除。故障注入脚本仅覆盖验证进程的 Node fs 方法，不进入产品运行路径。
+
+新发现的 Xcsa-ee/moonflac 仅作为竞争分析参考，未复制或链接其源码。CI 使用官方 MoonBit 发行归档；actions/checkout、setup-node、setup-python 为外部 CI 工具，不是库运行依赖。

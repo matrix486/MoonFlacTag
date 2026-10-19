@@ -1,0 +1,15 @@
+# Changelog
+
+## 0.2.0 - 2026-10-19（本地）
+
+- 新增 Document.plan、plan_metadata、RewritePlan，提供只含元数据的写出计划。
+- 新增 CLI plan、--padding、--help、--version；MD5 字段改为小写 hex。
+- CLI 前缀有界读取、音频分块复制，移除原 256 MiB 整文件上限。
+- 重试短写，普通读写/fsync 错误清理本次输出，检测源变化，错误输出 JSON。
+- 拒绝重复 SEEKTABLE/CUESHEET，检查 seek 点排序、唯一性及末尾 placeholder。
+- 增加四组真实媒体对照、268439553 bytes 合成复制与六类 I/O 注入；两后端各 23 项测试。
+- 增加同一验收入口的 CI 配置、维护说明，刷新相近 FLAC 解码库的竞争分析。
+
+## 0.1.0 - 2026-10-17（本地）
+
+首次交付元数据/标签/封面读写、padding 预算、Node CLI、双后端测试、真实媒体对照、实际归档消费与一页申报草稿。未在线发布。

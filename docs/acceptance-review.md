@@ -1,27 +1,45 @@
-# 本地验收准备复核
+# 验收准备复核 - 0.2.0
 
-材料日期：2026-10-17；十月赛；MoonFlacTag 0.1.0。公开仓库、真实作者与 Mooncakes namespace 待指定。
+材料日期：2026-10-19；十月赛。结论：本地可执行技术门槛已通过；已知技术缺项已修复。公开仓库、注册表发布、远端 CI 与报名属于尚未执行的线上步骤。
 
-总体状态：本地技术交付和申报草稿就绪；尚未公开发布、报名或取得官方审核结果。
+## 官方要求对应
 
-规则依据为当天读取的官方 [App.tsx](https://github.com/moonbitlang/Hackathon2026/blob/main/src/App.tsx)。10 月 31 日报名与验收截止、十月最多提交 3 次、每队不超过 3 人、公开持续开发、MoonBit 主体、可复现代码/README/测试/演示、开源合规属于官网要求。下列测试和归档验证为本项目质量措施，不冒充赛事逐项强制条件。
+2026-10-19 重读官方 [十月赛页面源码](https://github.com/moonbitlang/Hackathon2026/blob/main/src/App.tsx)，JS 页面正文通过 raw GitHub 获取。官网列出的六项要求与本项目证据如下，测试数量不是官方门槛。
 
-|检查|证据|本地结果|
+|官网要求|证据|状态|
 |---|---|---|
-|用户需求与独立贡献|project-proposal.md、两份生态调研、竞争分析|选定原生 FLAC 元数据编辑，淘汰已有直接竞品方向|
-|主要 MoonBit 实现|根包 wire/comments/picture/document/edit，生成 mbti|核心解析与编辑均为 MoonBit；JS FFI 仅宿主 I/O|
-|工具链|docs/test-evidence/local-verification.json|moon 0.1.20260915；moonc v0.10.13；Node v24.19.0|
-|格式/检查/构建|scripts/verify.py|fmt --check；Wasm-GC/JS check +73 --deny-warn、build --deny-warn 通过|
-|公共接口与示例|metadata_test.mbt、API.mbt.md、pkg.generated.mbti|两后端各 16 项测试，其中 1 项文档测试；moon info 已生成并审阅|
-|真实媒体|合成 sine FLAC、有效 PNG、FFmpeg/ffprobe|标签、封面、PCM 与压缩后缀对照通过|
-|音频保持|原边界 8333、音频 3158 bytes、PCM 22050 bytes|默认 edit 后边界不变；音频和解码 PCM 逐字节一致|
-|错误与资源边界|截断循环、非法 u32 长度、重复块、padding、CLI 错误测试|通过；核心累计元数据 16 MiB/4096 块，CLI 文件 256 MiB|
-|实际归档消费|scripts/verify_package.py|真实 zip 解压后独立工作区，两后端各 1 项消费测试；解压 CLI 成功|
-|许可证与素材|LICENSE、THIRD_PARTY.md、fixtures/README.md|MIT；合成媒体、独立实现；无第三方实现代码导入|
-|申报与演示|submission-proposal.md、docs/demo.md、一页 PDF|本地草稿；真实身份和线上链接待补|
+|MoonBit 为主|根包核心、CLI 参数/报告、可执行示例；host.mbt 仅 Node I/O FFI|本地满足|
+|仓库公开、开发可追踪|真实本地 Git 阶段历史|依用户要求未公开；不能以本地历史冒充公开记录|
+|可运行、README、例子与必要测试|README、examples/plan、API.mbt.md、scripts/acceptance.py|本地满足|
+|实质工作|原创标签事务、封面写出、padding 规划、流式宿主；见 CHANGELOG|本地有对应源码和验证|
+|开源合规|MIT、THIRD_PARTY、合成 fixture 来源|本地满足|
+|AI 可解释|docs/maintainer-guide.md、架构不变量、AI 范围|材料已准备；参赛者需自行掌握与讲解|
 
-本期新增为 FLAC 标签事务、封面写出、padding 预算规划和不透明块/音频保留；不是音频解码器。AI 辅助范围已披露，参赛者需理解并维护。测试数量按库/文档与独立消费分别记录，不相加为采用量。
+官网仍显示 2026-10-31 截止、十月最多提交三次、队伍不超过三人。正式章程链接本次工具未能读取，不补造额外条款；报名时按官方最终口径核对。
 
-边界：全文件内存处理；音频帧、MD5/CRC 不由本库验证；不解码图片、不请求链接图片；CUESHEET 与 SEEKTABLE 不做完整语义检查；native 后端不在本版支持声明中。真实 fixture 的解码对照不能证明任意输入的音频有效。
+## 实际技术证据
 
-后续发布阶段：指定仓库/账号/作者、替换本地模块名、核对正式链接及分发清单、实际远端 CI、确切注册表版本安装。公开持续开发要求尚未满足；本地历史不能补造为公开历史。正式报名所需身份和官方审核由相应流程确认。
+|本项目质量检查|执行结果|证据|
+|---|---|---|
+|工具链与格式|moon 0.1.20260915 / moonc v0.10.13；fmt --check 通过|local-verification.json|
+|公开 API|moon info 已审阅；新 RewritePlan、Document.plan、plan_metadata|pkg.generated.mbti|
+|Wasm-GC / JS|各 23 测试（21 普通、2 文档）、check +73 --deny-warn / build 通过|local-verification.json|
+|两后端行为|同一前缀规划示例 stdout 逐字节一致|examples/plan 与验证记录|
+|原有真实媒体|44100 Hz / mono / 16 bit：标签、封面提取、3158 bytes 压缩音频、22050 bytes PCM 对照|local-verification.json|
+|多格式真实媒体|22050/48000/96000 Hz，1/2/6 声道，16/24 bit 四组；压缩及 s32le PCM 一致|media-matrix.json|
+|大文件|268439553 bytes 合成文件，后缀逐字节比对；大文件对已删除|streaming-cli.json|
+|失败路径|短写、写异常、零进展、读异常、fsync 异常、源变化注入；失败清理、源不误写|streaming-cli.json|
+|边界与无损属性|24 位上限、4096 块、畸形 UTF-8、36 位 samples、排序/占位符、80 组编辑矩阵|planning_test.mbt / metadata_test.mbt|
+|实际归档消费|0.2.0 实际 zip 解压，两后端各 1 消费测试，解压 CLI inspect/plan|package-consumption.json|
+|自动复现|同一 acceptance.py 入口；固定工具链 CI 配置|.github/workflows/ci.yml，尚未在线运行|
+|申报与演示|精简 Markdown、一页 PDF、三分钟操作说明|submission-proposal.md / docs/demo.md|
+
+上述 JSON 均在 docs/test-evidence。归档消费记录只留本地/Git，不嵌入自己所描述的 zip。核心/文档测试与独立消费计数分开。
+
+## 0.1.0 到 0.2.0 修复
+
+移除 CLI 256 MiB 整文件限制，改为前缀规划与分块复制；添加只读 plan 及 padding 入口；文件错误转 JSON，普通写出失败清理输出；检查源变化；拒绝重复 SEEKTABLE/CUESHEET 与乱序 seek 点；补充多声道/24 bit 和真实 I/O 故障验证。新发现的 Xcsa-ee/moonflac 已有元数据读取，本项目贡献明确为编辑和写出，详见生态报告。
+
+范围：本库不验证音频帧 CRC/MD5，不解码图片，不解析 CUESHEET 内容；大文件测试的后缀为合成 bytes，不冒充可解码音频。文件并发变化检测不等于锁定或崩溃原子提交。
+
+公开仓库/真实身份/namespace/远端 CI/确切 registry 消费以及正式报名仍待对应发布流程。官方审核结论须由赛事方给出。

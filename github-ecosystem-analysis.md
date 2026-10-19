@@ -16,3 +16,9 @@ API 返回的 pushed_at 是仓库活动，不能替代某功能的提交时间�
 本项目参考 [RFC 9639](https://www.rfc-editor.org/rfc/rfc9639.html) §8，独立实现元数据编辑。未复制上述项目代码。已有 C/Rust/JS FLAC 标签工具是成熟外部方案，MoonBit 的价值为可嵌入、可编译到 Wasm 的原生库，而非声称发明 FLAC 标签格式。
 
 与本批前两个项目的边界：本项目处理文件内音频元数据，不使用 Netlink、不读取 cgroup、不共享其核心实现或验证材料。私有目录与账号信息只在本地台账。
+
+## 2026-10-19 相近实现刷新
+
+[Xcsa-ee/moonflac](https://github.com/Xcsa-ee/moonflac) 的 README 与 [metadata_ext.mbt](https://github.com/Xcsa-ee/moonflac/blob/master/metadata_ext.mbt) 已读取。GitHub pushed_at=2026-10-18T10:34:34Z，stars=0，open_issues_count=0。仓库不跟踪根 pkg.generated.mbti，本次按实际公开函数声明检查。
+
+公开函数包括 read_seektable / read_vorbis_comment / read_picture / read_application，属于元数据读取与音频解码；README 声明不提供编码器/标签写入。未见元数据写出和保存事务接口，不能据此虚构上游未解决 issue。MoonFlacTag 继续独立实现编辑、padding、RewritePlan 和 Node 分块保存；两者功能可互补。没有移植或导入该项目代码。
