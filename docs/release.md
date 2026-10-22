@@ -1,23 +1,19 @@
-# 本地交付 0.2.0
+# 本地交付 0.3.0
 
-2026-10-19，模块 local/moonflactag，MIT。保留本地，GitHub owner/repo、真实作者、Mooncakes 账号/namespace 和参赛者资料待指定。
+2026-10-22，local/moonflactag，MIT。用户要求继续保留本地，未指定公开仓库/作者/注册表 namespace。
 
-本版新增元数据 RewritePlan、只读 plan 命令、分块文件保存、普通错误清理和源变化检测，补齐 seektable 顺序和 singleton 约束。详见 CHANGELOG。
+新增：目录批量预览/保存与逐文件结果；PNG/JPEG、按类型保留/替换/追加/删除及导出；元数据精确增量读取；结构化错误；临时文件无覆盖原子发布；第二编码路径和性能记录。原 parse/rewrite/plan API 与旧 --cover-png 全替换语义保留。
 
-工具链：moon 0.1.20260915 (2e1a46d)、moonc v0.10.13+cbb11c36f、moonrun 0.1.20260915；Windows 上实测，Node v24.19.0。CI 准备使用官方 0.10.13+cbb11c36f 发行归档，对应 Linux 二进制及 core URL 已可访问。
+工具链仍为 moon 0.1.20260915、moonc v0.10.13+cbb11c36f、Node v24.19.0，Windows 实测。开发对照使用 FFmpeg、soundfile 0.13.1 / libsndfile 1.2.2 / numpy 1.26.4。运行库不依赖这些 Python/媒体工具。
 
-|门槛|实际结果|
-|---|---|
-|Wasm-GC / JS|各 23 测试（含 2 文档测试）；fmt/check +73/deny-warn/build 通过|
-|跨后端示例|规划结果 stdout 相同|
-|真实媒体|原有素材加四组媒体，标签/封面/压缩音频/PCM 对照通过|
-|宿主 I/O|268439553 bytes 合成文件；六类故障注入通过|
-|实际分发|真实 zip 独立工作区双后端各 1 消费测试；解压 CLI inspect/plan 成功|
+两后端各 31 项测试（含 3 文档测试）、跨后端示例一致；FFmpeg 五组加 libsndfile 三组，复杂标签和 PCM 对照通过；批量/封面/发布竞态/强制退出、大文件与六类故障通过；实际归档消费各 2 项和解压 CLI 通过。一键入口 python scripts/acceptance.py。
 
-一键复现 python scripts/acceptance.py。详情见 docs/test-evidence 下的 local-verification.json、media-matrix.json、streaming-cli.json。package-consumption.json 记录当次实际文件数和 zip 大小，只留本地/Git，排除其自己描述的归档。
+性能是本机单次仪器化基线：64 MiB 合成文件 inspect 只读 8333 bytes；具体耗时、读取量、Node maxRSS 见 performance-baseline.json，不作普遍速度承诺。
 
-归档：_build/publish/local-moonflactag-0.2.0.zip。含源代码、API、CLI 源码、素材、文档、验证脚本和许可；排除研究原件、大型中间素材、工具链、Git、私有台账、PDF、CI 配置。repository 未指定的打包提示如实保留，不填造 URL。
+归档 _build/publish/local-moonflactag-0.3.0.zip，含源码、公开 API、CLI、测试、必要素材、文档和复现脚本；排除研究原件、工具链、生成大文件、私有台账、Git、PDF 与 CI 配置。package-consumption.json 记录当次真实清单/结果，排除其自己描述的库归档。repository 待指定的打包提示如实保留。
 
-提交历史保留真实阶段：0.1.0 调研/核心/媒体验证/申报材料；0.2.0 的功能、验证和材料在本地继续提交，不补造公开日期。0.1.0 于 2026-10-17 本地完成、各后端 16 测试，属于历史结果。
+保存要求目标目录支持硬链接。内容写完后原子发布目标，已有/竞态目标不覆盖；普通失败清理，强制退出可留私有临时文件，不承诺断电持久性。
 
-线上发布、远端 CI、registry 确切版本安装、正式报名与官方审核均未执行。CI 配置已准备，在公开阶段运行后再补正式证据。
+历史：0.1.0（2026-10-17）首次本地交付，各后端 16 测试；0.2.0（2026-10-19）规划与分块复制，各后端 23 测试。历史记录保留，不补造公开时间。
+
+待发布事项：真实身份与 namespace、公开开发记录、线上 CI、确切 registry 安装和正式报名/官方审核。

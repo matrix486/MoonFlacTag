@@ -1,23 +1,25 @@
-# 三分钟本地演示 - 0.2.0
+# 三分钟本地演示 - 0.3.0
 
-需要 MoonBit、Node.js，在项目根目录操作。mkdir demo-output（目录不存在时）。输出用新文件名，重复演示可换后缀。
+需要 MoonBit/Node，在项目根目录新建 demo-output。输出名需未占用。
 
-0-30 秒：inspect 展示合成 sine 的 Original 标题与采样信息；说明本项目解决元数据编辑及无重编码保存，已有 FLAC 解码库可作为互补组件。
+0-35 秒：inspect 展示原音频、标签与图片；plan 更改 TITLE，显示无写入预览。
 
 ~~~powershell
 moon run cmd/main --target js -- inspect fixtures/tone.flac
-moon run cmd/main --target js -- plan fixtures/tone.flac --set=TITLE=MoonFlacTag --add=ARTIST=Guest
+moon run cmd/main --target js -- plan fixtures/tone.flac --set=TITLE=MoonFlacTag
 ~~~
 
-30-100 秒：plan 的 preview=true，展示 metadata_delta=0；保存后增加封面，再检查标签。
+35-95 秒：保存标签与 PNG 前封，再原样导出。
 
 ~~~powershell
-moon run cmd/main --target js -- edit fixtures/tone.flac demo-output/demo-tagged.flac --set=TITLE=MoonFlacTag --add=ARTIST=Guest
-moon run cmd/main --target js -- edit demo-output/demo-tagged.flac demo-output/demo-cover.flac --cover-png=fixtures/cover.png --compact
+moon run cmd/main --target js -- edit fixtures/tone.flac demo-output/demo-covered.flac --set=TITLE=MoonFlacTag --cover=fixtures/cover.png --compact
+moon run cmd/main --target js -- extract-cover demo-output/demo-covered.flac demo-output/demo-cover.png --index=0
 ~~~
 
-100-145 秒：展示 plan_metadata 与 examples/plan 的两后端相同输出；解释偏移预算不足和 1..3 字节余量为何返回 NoSpace；展示短写/磁盘故障无残缺输出的记录。CLI 只读取有界前缀并分块复制音频。
+说明 --cover 只替换默认前封，--picture-kind=4 可操作后封，--append-cover 追加，JPEG 也可导入。展示 product-workflows.json 的实际前/后封保留和逐字节导出对照。
 
-145-180 秒：展示 docs/test-evidence。原素材压缩音频 3158 bytes、PCM 22050 bytes 一致，另四组包含 24 bit / 六声道对照；大文件 268439553 bytes 是合成 I/O fixture，不冒充音频解码证明。
+95-140 秒：以自己准备的 album-in（两首正常、一首损坏、一个嵌套文件）演示 batch plan，再向不重叠的新 album-out 执行 batch edit --recursive --set=ALBUM=Demo，观察逐文件结果与部分失败退出。预览不冻结输入，单个失败不阻断整批。
 
-完整复现 python scripts/acceptance.py。参赛者应能说明根包与 Node I/O 边界，详见 maintainer-guide.md。
+140-180 秒：展示 31 项双后端测试、FFmpeg 与 libsndfile 两种编码路径、512 次突变和复杂标签对照；显示 64 MiB 文件 inspect 只读 8333 bytes。说明完整临时文件再发布目标的协议与强制退出测试。
+
+一键复现 python scripts/acceptance.py；统计与素材边界见 acceptance-review.md。

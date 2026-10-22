@@ -61,6 +61,21 @@ test "independent archive consumer" {
   assert_eq(plan.old_audio_offset, doc.audio_offset())
 }
 '''.replace("INPUT", literal)
+            png = (ROOT / "fixtures/cover.png").read_bytes()
+            png_literal = 'b"' + ''.join(f'\\x{b:02x}' for b in png) + '"'
+            source += '''
+///|
+test "archive selective artwork and prefix APIs" {
+  let image = @flac.picture_from_image(PNG)
+  let back = {..image,kind:4}
+  let selected = @flac.edit_pictures([back],[SetPicture(image)])
+  assert_eq(selected,[back,image])
+  match @flac.metadata_prefix_length(INPUT) {
+    Complete(n) => assert_true(n > 42)
+    NeedMore(_) => fail("complete fixture did not frame")
+  }
+}
+'''.replace("PNG", png_literal).replace("INPUT",literal)
             (consumer / "consumer_test.mbt").write_text(source, encoding="utf-8")
             results = {target: run(["moon", "test", "--package", "local/flactag_consumer", "--target", target, "--deny-warn"], consumer) for target in ["wasm-gc", "js"]}
             # Verify the extracted CLI can also be built and run without the source checkout.
@@ -70,7 +85,9 @@ test "independent archive consumer" {
             assert output["stream"]["total_samples"] == "11025"
             planned = subprocess.run(["moon", "run", "cmd/main", "--target", "js", "--", "plan", str(library / "fixtures/tone.flac"), "--set=TITLE=Packaged preview"], cwd=library, capture_output=True, check=True)
             assert json.loads(planned.stdout)["preview"] is True
-    result = {"material_date": "2026-10-19", "version": version, "archive": archive.name, "file_count": len(entries), "archive_bytes": archive.stat().st_size, "consumers": results, "extracted_cli": "inspect and plan passed", "distribution_exclusions": "passed", "packaging_output": packaging.replace(str(ROOT), "<project>")}
+            batch_plan = subprocess.run(["moon", "run", "cmd/main", "--target", "js", "--", "batch", "plan", str(library / "fixtures"), "--set=TITLE=Packaged batch"], cwd=library, capture_output=True, check=True)
+            assert json.loads(batch_plan.stdout)["total"] == 1
+    result = {"material_date": "2026-10-22", "version": version, "archive": archive.name, "file_count": len(entries), "archive_bytes": archive.stat().st_size, "consumers": results, "extracted_cli": "inspect, plan and batch plan passed", "distribution_exclusions": "passed", "packaging_output": packaging.replace(str(ROOT), "<project>")}
     (ROOT / "docs/test-evidence/package-consumption.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, indent=2))
 

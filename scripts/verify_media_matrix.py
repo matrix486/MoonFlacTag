@@ -30,7 +30,7 @@ def main():
         assert int(s["bits_per_raw_sample"]) == actual["stream"]["bits_per_sample"] == bits
         assert {k.lower(): v for k, v in probe["format"]["tags"].items()}["title"] == "矩阵🌙"
         results.append({"sample_rate": rate, "channels": channels, "bits": bits, "pcm_s32le_bytes": len(original_pcm), "audio_bytes": len(before_meta[2]), "compressed_identical": True, "decoded_identical": True, "metadata_matches_ffprobe": True})
-    result = {"material_date": "2026-10-19", "fixtures": "generated sine; not third-party recordings", "cases": results}
+    result = {"material_date": "2026-10-22", "fixtures": "generated sine; not third-party recordings", "cases": results}
     (EVIDENCE / "media-matrix.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(result, indent=2))
 

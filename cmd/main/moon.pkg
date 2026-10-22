@@ -3,6 +3,7 @@ supported_targets = "js"
 import {
   "local/moonflactag" @flac,
   "moonbitlang/core/encoding/hex",
+  "moonbitlang/core/json",
 }
 
 pkgtype(kind: "executable")

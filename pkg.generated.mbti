@@ -10,11 +10,17 @@ pub fn decode_comments(Bytes) -> Comments raise FlacError
 
 pub fn decode_picture(Bytes) -> Picture raise FlacError
 
+pub fn edit_pictures(Array[Picture], Array[PictureEdit]) -> Array[Picture] raise FlacError
+
 pub fn encode_comments(Comments) -> Bytes raise FlacError
 
 pub fn encode_picture(Picture) -> Bytes raise FlacError
 
+pub fn metadata_prefix_length(Bytes) -> PrefixStatus raise FlacError
+
 pub fn parse(Bytes, max_metadata? : Int) -> Document raise FlacError
+
+pub fn picture_from_image(Bytes, kind? : Int, description? : String) -> Picture raise FlacError
 
 pub fn plan_metadata(Bytes, Array[TagEdit], pictures? : Array[Picture], padding? : Padding) -> RewritePlan raise FlacError
 
@@ -69,6 +75,18 @@ pub(all) struct Picture {
   depth : UInt
   colors : UInt
   data : Bytes
+} derive(Eq, @debug.Debug)
+
+pub(all) enum PictureEdit {
+  SetPicture(Picture)
+  AddPicture(Picture)
+  RemovePictureKind(Int)
+  ClearPictures
+} derive(Eq, @debug.Debug)
+
+pub(all) enum PrefixStatus {
+  NeedMore(Int)
+  Complete(Int)
 } derive(Eq, @debug.Debug)
 
 pub(all) struct RewritePlan {

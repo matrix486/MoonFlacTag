@@ -27,7 +27,7 @@ def main():
         assert isinstance(json.loads(result.stderr)["error"], str)
         assert b"at Module" not in result.stderr
     assert cli("--help").returncode == 0
-    assert "0.2.0" in cli("--version").stdout.decode()
+    assert "0.3.0" in cli("--version").stdout.decode()
     # Inject ordinary host failures, not fake success paths in the core library.
     hook = work / "fault.cjs"
     base_hook = r'''
@@ -44,7 +44,7 @@ fs.writeSync = function(fd, data, offset, length, position) {
 };
 fs.readSync = function(...args) {
   reads++;
-  if (MODE === 'read' && reads === 2) throw new Error('injected read failure');
+  if (MODE === 'read' && writes > 0) throw new Error('injected read failure');
   return originalRead.apply(fs, args);
 };
 if (MODE === 'sync') fs.fsyncSync = () => { throw new Error('injected fsync failure'); };
@@ -88,7 +88,7 @@ if (MODE === 'sync') fs.fsyncSync = () => { throw new Error('injected fsync fail
     # Remove the generated large pair after comparison; fixtures remain tiny.
     large_input.unlink()
     large_output.unlink()
-    result = {"material_date": "2026-10-19", "preview_no_write": True, "explicit_padding": True, "json_error_cases": 6, "host_faults": fault_results, "large_synthetic_bytes": large_size, "large_suffix_compared_byte_for_byte": True, "large_pair_removed_after_test": True}
+    result = {"material_date": "2026-10-22", "preview_no_write": True, "explicit_padding": True, "json_error_cases": 6, "host_faults": fault_results, "large_synthetic_bytes": large_size, "large_suffix_compared_byte_for_byte": True, "large_pair_removed_after_test": True}
     (EVIDENCE / "streaming-cli.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(result, indent=2))
 

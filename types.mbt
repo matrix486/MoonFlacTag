@@ -83,3 +83,19 @@ pub(all) struct RewritePlan {
   old_audio_offset : Int
   audio_offset : Int
 } derive(Debug)
+
+///|
+/// Ordered artwork edits; SetPicture replaces its kind while preserving other kinds.
+pub(all) enum PictureEdit {
+  SetPicture(Picture)
+  AddPicture(Picture)
+  RemovePictureKind(Int)
+  ClearPictures
+} derive(Debug, Eq)
+
+///|
+/// Exact byte requirement for incremental metadata prefix readers.
+pub(all) enum PrefixStatus {
+  NeedMore(Int)
+  Complete(Int)
+} derive(Debug, Eq)

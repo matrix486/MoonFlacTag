@@ -23,6 +23,8 @@ jobs:
           echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
       - name: Install the independent media oracle
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Install the second encoder and PCM oracle
+        run: python -m pip install soundfile==0.13.1 numpy==1.26.4
       - name: Show toolchain
         run: moon version --all --no-path
       - name: All local gates

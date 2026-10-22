@@ -1,0 +1,14 @@
+{
+  "material_date": "2026-10-22",
+  "artwork": "PNG/JPEG headers, selective replacement, append, remove, exact export, legacy replacement passed",
+  "batch": "preview, recursion, stable ordering, partial failure, collisions, disjoint roots, empty directories passed",
+  "symlinks": "skipped without traversal",
+  "structured_errors": true,
+  "atomic_publication": {
+    "destination_hidden_until_complete": true,
+    "racing_destination_preserved": true,
+    "publish_failure_cleanup": true,
+    "forced_exit_leaves_no_destination": true
+  },
+  "original_audio_preserved": true
+}

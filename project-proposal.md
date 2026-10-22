@@ -35,3 +35,7 @@ MVP：native FLAC 文件签名与 STREAMINFO、重复 Vorbis comments 的大小�
 上文是 0.1.0 原始 MVP 方案。本次在相同项目边界内补齐 RewritePlan / Document.plan / plan_metadata，CLI 的 plan 预览和 --padding；文件层改为最多 16 MiB 前缀与 1 MiB 分块后缀复制，移除 256 MiB 整文件限制。普通读写/fsync 失败清理输出，源变化时拒绝保存。新增 seektable 顺序/placeholder 和单例块检查。累计元数据限制维持不变，内存 rewrite API 保持兼容。
 
 新增四组 FFmpeg 对照、268439553 bytes 合成大文件和六类宿主故障验证。两后端当前各 23 测试，含 2 文档测试；跨后端 plan 示例相同，实际 0.2.0 归档独立消费。新增 FLAC 解码库的读取能力已在生态报告中列明，编辑/写出仍为本项目独立贡献。具体范围和状态以 docs/acceptance-review.md 为准。
+
+## 0.3.0 后续完善（2026-10-22）
+
+按真实使用缺口新增内置目录批量、按类型保留/编辑封面及 PNG/JPEG 导出，补上固定错误字段、临时文件原子发布和元数据按需读取。新增第二编码路径 libsndfile、复杂标签和确定性畸形输入验证；每后端 31 测试，实际归档消费各 2 项。性能基线实际记录读取量/耗时/峰值 RSS，未将单次合成样本作为通用性能保证。原 API、旧 PNG 全替换入口保持兼容。交付仍仅本地，当前状态见新版验收报告。

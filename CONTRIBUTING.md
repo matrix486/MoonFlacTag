@@ -1,13 +1,13 @@
 # 开发与维护
 
-已验证 MoonBit 0.10.13+cbb11c36f（moon 0.1.20260915）、Node 24、Python 3.9+；集成测试需要 FFmpeg/ffprobe。
+已验证 MoonBit 0.10.13+cbb11c36f（moon 0.1.20260915）、Node 24、Python 3.9+，集成需要 FFmpeg/ffprobe。第二编码/PCM oracle 使用 soundfile==0.13.1、numpy==1.26.4，仅开发使用，CI 已配置。
 
-1. 使用清洁工作区，从 README 运行示例。
-2. 根包放公共类型和纯核心，cmd/main 仅放 CLI 与 Node I/O。每个顶层声明用 ///|。
-3. 为具体失败添加复现，保持正常输入和错误边界测试；关键编码需要独立 golden 或外部 oracle。
-4. moon fmt；moon info --target wasm-gc；审阅接口变化。
-5. python scripts/acceptance.py，覆盖核心、跨后端示例、媒体、文件失败及实际 zip 消费。
+核心类型、纯格式与编辑逻辑放根包，cmd/main 负责 CLI 和宿主 I/O 桥。每个顶层声明用 ///|，公开类型由公开包拥有，接口经 moon info 生成。
 
-不要手改 pkg.generated.mbti，不将 research/、工具链、大型生成素材或私有台账纳入分发。素材更改需更新 fixtures/README.md。
+针对实际失败增加最小复现；关键编码使用手工 golden 或独立 oracle。执行 moon fmt；moon info --target wasm-gc；审阅接口；python scripts/acceptance.py。同一入口覆盖所有本地门槛，CI 尚未在线运行。
 
-CI 固定版本安装地址来自官方安装脚本，使用同一 acceptance.py。修改工具链后需实际验证并更新版本证据。正式仓库、作者与 registry namespace 在发布阶段指定；本项目当前只保留本地。
+文件保存测试要求环境允许同目录硬链接；在禁止该操作的沙箱内会失败，不应将测试改成绕过原子发布。验证仅使用项目内临时目录，本机普通运行环境完成后检查相应 JSON。
+
+性能基线不设机器相关时间阈值，只断言读取量与结果正确，记录含启动时间和 maxRSS。兼容语料由两套编码路径现场生成，清楚区分合成数据和真实媒体格式。
+
+不要手改 mbti、复制凭据/工具链/研究原件或把生成大文件纳入分发。新增素材说明来源。发布前另指定身份/owner/namespace；本轮只在本地保存。

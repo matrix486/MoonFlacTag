@@ -16,7 +16,7 @@ def main():
     parser.add_argument("--font", default="C:/Windows/Fonts/simhei.ttf")
     args = parser.parse_args()
     version = re.search(r'^version\s*=\s*"([^"]+)"', (ROOT / "moon.mod").read_text(encoding="utf-8"), re.M)[1]
-    material_date = "2026-10-19"
+    material_date = "2026-10-22"
     pdfmetrics.registerFont(TTFont("CJK", args.font))
     dest = ROOT / f"output/pdf/MoonFlacTag-proposal-{version}.pdf"
     dest.parent.mkdir(parents=True, exist_ok=True)
@@ -33,15 +33,15 @@ def main():
         story.append(Paragraph(label, heading))
         story.append(Paragraph(text, body))
 
-    section("用户问题与生态新增", "面向音乐归档、媒体整理和上传工具：修改标题、作者或封面，无需重新编码音频。已有 MoonBit rodio / FFmpeg / moonflac 提供播放、解码或元数据读取，本项目独立贡献为编辑与写出。初次检索 3048 条模块元数据，本次针对 3114 条当前元数据刷新，并核对相关源码。")
-    section("已交付能力", "重复 Vorbis 标签 set / add / remove；PICTURE 封面替换与删除；未知块和原音频 bytes 保留；padding 三策略；RewritePlan 元数据前缀规划与 CLI 只读预览。大文件以前缀有界读取和分块复制保存，短写重试，普通失败清理。格式与编辑为 MoonBit，JS FFI 只处理宿主文件 I/O。")
+    section("用户问题与生态新增", "面向音乐归档、媒体整理和上传工具：修改标题、作者或封面，无需重新编码音频。已有 MoonBit rodio / FFmpeg / moonflac 提供播放、解码或元数据读取，本项目独立贡献为编辑与写出。选题及生态去重依据保存在项目报告中，检索日期和范围可追溯。")
+    section("已交付能力", "重复标签 set / add / remove；PNG / JPEG 图片头识别、按类型替换及追加封面、原始图片导出；目录批量预览及编辑、逐文件错误报告。未知块与压缩音频保留，padding 三策略。按需读取元数据，以临时文件加硬链接完成目标原子发布且拒绝覆盖；提供稳定 JSON 错误字段。格式与编辑逻辑为 MoonBit。")
     story.append(Paragraph("验证证据", heading))
-    rows = [[Paragraph("检查范围", small), Paragraph("实际结果", small)], [Paragraph("Wasm-GC / JavaScript", body), Paragraph("各 23 项测试（含 2 项文档测试）；格式、check、build；跨后端规划输出一致", body)], [Paragraph("真实媒体独立对照", body), Paragraph("五组音频，16 / 24 位、1 / 2 / 6 声道；FFmpeg / ffprobe 标签、封面、压缩音频与 PCM 对照通过", body)], [Paragraph("大文件与失败路径", body), Paragraph("268439553 bytes 合成后缀逐字节一致；短写、读写失败、fsync、源变化等六类注入通过", body)], [Paragraph("实际归档消费", body), Paragraph("两后端各 1 项独立消费测试；解压 CLI inspect / plan 成功", body)]]
+    rows = [[Paragraph("检查范围", small), Paragraph("实际结果", small)], [Paragraph("Wasm-GC / JavaScript", body), Paragraph("各 31 项测试（含 3 项文档测试）；512 次确定性变异；格式、check、build 通过", body)], [Paragraph("真实媒体独立对照", body), Paragraph("FFmpeg 五组与 libsndfile 三组编码；8 / 16 / 24 位、复杂标签、压缩音频与 PCM 对照通过", body)], [Paragraph("保存安全与读取成本", body), Paragraph("并发目标、链接失败、强制退出验证通过；约 64 MiB 合成文件 inspect 只读 8333 字节", body)], [Paragraph("实际归档消费", body), Paragraph("两后端各 2 项独立消费测试；解压 CLI inspect / plan / batch plan 成功", body)]]
     table = Table(rows, colWidths=[154, 357], hAlign="LEFT")
     table.setStyle(TableStyle([("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#e6f3f4")), ("VALIGN", (0, 0), (-1, -1), "TOP"), ("LEFTPADDING", (0, 0), (-1, -1), 9), ("RIGHTPADDING", (0, 0), (-1, -1), 9), ("TOPPADDING", (0, 0), (-1, -1), 6), ("BOTTOMPADDING", (0, 0), (-1, -1), 2), ("LINEBELOW", (0, 0), (-1, -1), 0.4, colors.HexColor("#d6e1e8"))]))
     story.append(table)
-    section("工程边界与维护", "累计元数据 16 MiB / 4096 块，CLI 按 1 MiB 复制音频。检查源变化但不锁定文件，不承诺崩溃原子提交。不验证音频帧 CRC / MD5、不解码图片、不支持 Ogg-FLAC / 前置 ID3。MIT，合成素材来源清楚，AI 辅助范围已披露；维护说明、设计讲解和固定工具链 CI 配置已准备。")
-    section("演示与提交状态", "三分钟演示：inspect → plan 预览 → 标签与封面编辑 → padding 预算与独立对照。统一复现入口：python scripts/acceptance.py。源码、文档、验证和真实本地历史就绪；参赛者 / GitHub ID、仓库和 Mooncakes namespace 待指定。尚未公开发布、在线运行 CI 或正式报名。")
+    section("工程边界与维护", "累计元数据 16 MiB / 4096 块；音频按 1 MiB 复制。目标文件系统须支持硬链接；强制退出可遗留私有临时文件，不保证断电持久性。检测源变化但不锁定；不解码图片或音频帧，不支持 Ogg-FLAC / 前置 ID3。MIT，素材来源、性能测量方法、维护说明与固定工具链 CI 配置齐备。")
+    section("演示与提交状态", "三分钟演示：inspect → plan → 选择性封面编辑与导出 → batch plan / edit。统一复现入口：python scripts/acceptance.py。源码、文档及本地验收就绪；参赛者 / GitHub ID、仓库和 Mooncakes namespace 待指定。仅保存在本地，尚未公开发布、在线运行 CI 或正式报名。")
     story.append(Paragraph('技术依据：<link href="https://www.rfc-editor.org/rfc/rfc9639.html" color="#087f8c">RFC 9639 §8</link>；规则：<link href="https://github.com/moonbitlang/Hackathon2026/blob/main/src/App.tsx" color="#087f8c">官方十月赛页面源码</link>。详见项目内生态报告与验收复核。', small))
 
     def page(canvas, doc):

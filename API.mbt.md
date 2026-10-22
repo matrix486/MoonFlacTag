@@ -23,6 +23,30 @@ test "documented editing workflow" {
 
 流式宿主只需提供到最后元数据块为止的精确前缀，并按计划复制原文件音频后缀。
 
+图片可以按类型编辑，保留其他封面；下面使用合成 payload 演示选择语义，不将其当作真实图片。
+
+```mbt check
+///|
+test "documented selective artwork editing" {
+  let front : @moonflactag.Picture = {
+    kind: 3,
+    media_type: "image/png",
+    description: "front",
+    width: 0U,
+    height: 0U,
+    depth: 0U,
+    colors: 0U,
+    data: b"synthetic",
+  }
+  let back = { ..front, kind: 4, description: "back", }
+  let replacement = { ..front, description: "new", }
+  let result = @moonflactag.edit_pictures([front, back], [
+    SetPicture(replacement),
+  ])
+  assert_eq(result, [back, replacement])
+}
+```
+
 ```mbt check
 ///|
 test "documented streaming prefix plan" {

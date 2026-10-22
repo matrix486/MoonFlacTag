@@ -1,84 +1,104 @@
 # MoonFlacTag
 
-纯 MoonBit FLAC 标签、封面与无损元数据编辑库。核心支持 Wasm-GC 和 JavaScript，Node.js CLI 以分块方式保存大文件。无需 libFLAC / FFmpeg 运行时依赖。
+纯 MoonBit FLAC 标签与封面编辑库，附 Node.js 命令行工具。支持单文件、目录批量预览/保存，以及 PNG/JPEG 封面管理；原压缩音频逐字节保留，无需重新编码。核心支持 Wasm-GC 和 JavaScript。
 
-- 大小写无关的标签查询、设置、追加、删除，保留重复值和 vendor。
-- PICTURE 封面结构读写，保留非目标元数据与原压缩音频 bytes。
-- padding 保持偏移、紧凑输出和指定大小三种策略。
-- RewritePlan 只含元数据前缀，可供外部流式宿主复用。
-- plan 命令预览标签、元数据差值、新旧偏移和预计大小，不写文件。
+## 单文件使用
 
-## 快速运行
-
-需要 MoonBit 和 Node.js，运行目录为项目根目录。第一次使用时创建自己的输出目录：
+需要 MoonBit 和 Node.js，在项目根目录运行：
 
 ~~~powershell
-mkdir demo-output
+New-Item -ItemType Directory -Path demo-output -Force
 moon run cmd/main --target js -- inspect fixtures/tone.flac
 moon run cmd/main --target js -- plan fixtures/tone.flac --set=TITLE=Preview
 moon run cmd/main --target js -- edit fixtures/tone.flac demo-output/tagged.flac --set=TITLE=MoonFlacTag --add=ARTIST=Guest
-moon run cmd/main --target js -- edit fixtures/tone.flac demo-output/cover.flac --cover-png=fixtures/cover.png --compact
+moon run cmd/main --target js -- edit fixtures/tone.flac demo-output/covered.flac --cover=fixtures/cover.png --compact
+moon run cmd/main --target js -- extract-cover demo-output/covered.flac demo-output/extracted.png --index=0
 ~~~
 
-输出路径必须是新文件；成功返回 0、输出 JSON，失败返回非零、stderr 输出 JSON error。多个标签操作按顺序处理。--remove=KEY 删除全部同名标签，--remove-pictures 删除全部封面。--cover-png=FILE 替换封面，检查 PNG 签名，不解码图片。重复封面选项以最后一个为准。
+输出必须是新文件，重复演示请换输出名。inspect 显示音频参数、标签、图片索引和类型；plan 显示编辑后信息、元数据差值和大小，不写文件。默认利用 padding 保持音频偏移，空间不足返回 PADDING_NO_SPACE；--compact 允许移动音频，--padding=N 指定 0..16777215 字节 padding，最后一个 padding 选项生效。
 
-默认利用现有 padding 保持音频偏移。预算不足返回 NoSpace，调用方可选择 --compact；--padding=N 指定 0..16777215 字节 padding，这些选项按最后一个生效。--help / --version 提供入口说明。
+标签支持 --set=KEY=VALUE、--add=KEY=VALUE、--remove=KEY。匹配忽略 ASCII 大小写，保留重复值；Set 替换全部同名值，Add 追加，Remove 删除全部。操作按顺序执行。
 
-CLI JSON 的 stream.md5 为 STREAMINFO 原始 MD5 的 32 个小写十六进制字符，本库不重新计算该值。total_samples 用十进制字符串，文件大小为宿主安全整数。
+## 批量整理
 
-直接运行构建结果：
+将下面 album-in / album-out 换成自己的文件夹。输入输出树必须互不包含，输出目录可不存在。
 
 ~~~powershell
-moon build --target js --deny-warn
-node _build/js/debug/build/cmd/main/main.js inspect fixtures/tone.flac
+moon run cmd/main --target js -- batch plan album-in --recursive --set=ALBUM=Demo
+moon run cmd/main --target js -- batch edit album-in album-out --recursive --set=ALBUM=Demo
 ~~~
+
+- 默认仅当前目录，--recursive 才遍历子目录；扩展名 .flac 不区分大小写。
+- 保留相对路径，按路径稳定排序；跳过扫描中发现的符号链接。
+- 每个文件分别规划/保存，一个坏文件不阻断其余文件；已有输出不覆盖。
+- stdout 是一份 JSON，含 total / succeeded / failed / skipped_symlinks 和逐文件 results。
+- 全部成功退出 0，有失败退出 1；成功文件会保留，整批不是回滚事务。
+- 预览与保存分别读取当前输入，预览不会冻结文件或创建输出目录。
+
+最多 10000 个 FLAC 文件、20000 个扫描目录。共享选项错误在整批开始前返回错误；逐文件格式/保存错误记录在 results 中。批量和单文件使用相同标签、封面与 padding 选项。
+
+## 封面操作
+
+--cover=FILE 自动识别 PNG/JPEG 头，只替换选中类型，保留其他图片。默认类型 3（前封）；--picture-kind=N 设置后续封面操作类型，4 是后封，支持 0..20。
+
+|选项/命令|作用|
+|---|---|
+|--cover=FILE|替换当前选中类型，保留其他类型|
+|--append-cover=FILE|追加图片，不删除已有图片|
+|--remove-picture-kind=N|删除指定类型的全部图片|
+|--remove-pictures|清空图片|
+|extract-cover INPUT OUTPUT --index=N|按 inspect 返回的索引原样导出，默认索引 0|
+|--cover-png=FILE|兼容旧版：清空所有图片后放入一个 PNG 前封|
+
+PNG/JPEG 头用于读取尺寸和色深，不解码像素或验证全部图片内容。导出不转换编码；若原 PICTURE 存的是 URI，则导出其原始 bytes，不访问链接。type 1/2 图标各最多一个，type 1 要求 32×32 PNG。
+
+## 文件保存与错误
+
+先在目标同目录创建私有临时文件，写完、检查源变化并 fsync 后，以不覆盖目标的硬链接操作原子发布完整文件。已有目标或竞态创建的目标保持原样。该方式要求文件系统和运行环境允许同目录硬链接；不支持时返回对应错误，不退回覆盖保存。
+
+普通失败会尝试清理临时文件。强制退出时目标不会出现半成品，但可能留下 .moonflactag-*.tmp 私有临时文件，确认没有任务使用后可自行删除。原子可见性不等于断电持久性；源文件未锁定。
+
+单文件错误输出 stderr JSON：code、message、operation、path、offset；旧 error 文本字段保留。自定义编号包括 INVALID_ARGUMENT、FLAC_INVALID、METADATA_LIMIT、PADDING_NO_SPACE、PICTURE_NOT_FOUND、PATH_OVERLAP、BATCH_LIMIT、SOURCE_CHANGED 等；文件 I/O 使用 Node 原始编号，例如 ENOENT、EEXIST、EPERM。offset 为相关解析器的位置，可能为空，不保证都是全文件偏移。完整约定见 [错误说明](docs/errors.md)。
 
 ## 库 API
 
-本地模块名 local/moonflactag，发布身份待指定。通过 moon.work 工作区依赖导入；实际消费方式见 scripts/verify_package.py。
+本地模块名 local/moonflactag，公开发布目标待指定。通过 moon.work 工作区依赖导入。
 
-~~~moonbit nocheck
-let doc = @flac.parse(bytes)
-let result = doc.rewrite(
-  [Set("TITLE", "新标题"), Add("ARTIST", "Guest"), Remove("COMMENT")],
-  padding=PreserveOffset,
-)
-~~~
+- parse / Document.rewrite：完整 bytes 的内存接口。
+- Document.plan / plan_metadata / RewritePlan：只编码新元数据前缀，宿主复制原音频后缀。
+- metadata_prefix_length：增量读取精确需要的字节数，不预读音频。
+- picture_from_image：PNG/JPEG 头转 Picture。
+- edit_pictures：有序选择性封面编辑，不修改输入数组。
 
-pictures 参数省略表示保留，pictures=[] 删除全部。Exact(n) 添加 n 字节 padding（含另计四字节块头），Compact 删除 padding，PreserveOffset 用原预算补齐；剩余 1..3 字节无法容纳块头也返回 NoSpace。
-
-流式宿主调用 plan_metadata(prefix, edits, ...)，prefix 必须精确结束于最后元数据块。写入 plan.metadata 后，从原文件 plan.old_audio_offset 处复制音频后缀。已有 Document 可用 doc.plan(...)；rewrite 留给需要完整内存输出的调用方。
+公开签名见 [pkg.generated.mbti](pkg.generated.mbti)，可执行示例见 [API.mbt.md](API.mbt.md)。跨后端示例：
 
 ~~~powershell
 moon run examples/plan --target wasm-gc
 moon run examples/plan --target js
 ~~~
 
-公开签名见 [pkg.generated.mbti](pkg.generated.mbti)，可执行文档见 [API.mbt.md](API.mbt.md)，结构见 [architecture](docs/architecture.md)。
-
 ## 一键验收
+
+运行需要 MoonBit、Node 24、Python 3.9+、FFmpeg/ffprobe，兼容性测试另需 soundfile 0.13.1 / numpy 1.26.4（仅开发依赖）。
 
 ~~~powershell
 python scripts/acceptance.py
 ~~~
 
-需要 Python 3.9+、FFmpeg/ffprobe，仅用于开发验证。入口执行：
+两后端各 31 项测试（含 3 项文档测试）；另有 512 次确定性畸形输入突变、80 组编辑矩阵，循环次数不单列成测试数量。实际归档消费者各 2 项测试。完整流程覆盖：
 
-- 格式、双后端 check / test / build；两后端各 23 项测试，含 2 项文档测试。
-- 两后端示例输出逐字节一致。
-- FFmpeg / ffprobe 的标签、封面、压缩音频及 PCM 对照。
-- 四组额外媒体覆盖 22050/48000/96000 Hz、1/2/6 声道、16/24 位，PCM 以 s32le 保留精度。
-- 超过旧 256 MiB 上限的大文件后缀对照，以及短写、读写失败、同步失败、源变化注入。
-- 实际 zip 解压后独立消费，两后端各 1 项测试，解压 CLI 的 inspect/plan 可运行。
+- 目录批量预览、递归、部分失败、目标冲突及符号链接跳过。
+- PNG/JPEG 识别、选择性替换、追加、删除和逐字节导出。
+- 原有五组 FFmpeg 音频，加三组 libsndfile 8/16/24 bit 编码和约 98 KiB 复杂元数据；压缩后缀与 PCM 对照。
+- 268439553 bytes 合成大文件、六类 I/O 注入、发布竞态和强制退出。
+- 性能基线测量源读取量、含启动的耗时和 Node 峰值 RSS。64 MiB 合成样本 inspect 只读 8333 bytes 元数据，非通用速度承诺。
 
-结果在 docs/test-evidence/，大型临时素材在检查后删除。可分别运行 verify.py、verify_cli.py、verify_media_matrix.py、verify_package.py。CI 配置位于 .github/workflows/ci.yml，使用相同入口和固定 MoonBit 版本；尚未在线运行。
+记录在 docs/test-evidence。大型样本检查后删除，语料均为本地生成信号和独立元数据，不使用第三方录音。实际脚本与固定工具链 CI 已准备，CI 尚未在线运行。
 
-## 资源与文件保证
+## 边界与交付
 
-核心累计元数据上限 16 MiB、4096 块，单块受 24 位长度约束。CLI 最多读 16 MiB 前缀，按 1 MiB 分块复制后缀，无 256 MiB 整文件上限；输入必须是普通文件，大小能由宿主安全整数精确表示。parse/rewrite 内存 API 仍处理调用方提供的 bytes；plan_metadata 适用于有界前缀。
+累计元数据上限 16 MiB、4096 块，单块受 24 位长度约束；CLI 仅按需读取元数据，以 1 MiB 分块复制后缀。内存 API 的内存占用仍由调用方传入 bytes 决定。仅支持普通文件。
 
-独占创建新输出，短写重试，普通读写/同步错误时清理本次文件。用已打开的描述符复制，并检查源大小、mtime、ctime 变化。源文件未锁定，不承诺断电或进程被强制终止时的原子提交。
+不验证音频帧 CRC / MD5，不解码图片，不支持 Ogg-FLAC / 前置 ID3。SEEKTABLE 检查顺序和占位符，但不核对目标帧；CUESHEET 内容保留为不透明 bytes。
 
-不校验音频帧、CRC 或 MD5，不解码图片、不获取封面 URI。SEEKTABLE 检查长度、递增样本和末尾占位符，不核对目标帧；CUESHEET 内容保持不透明，拒绝重复块。不支持 Ogg-FLAC / 前置 ID3。
-
-0.2.0，MIT。素材见 [fixtures 来源](fixtures/README.md)，参考与 AI 辅助见 [THIRD_PARTY](THIRD_PARTY.md)，维护入口见 [CONTRIBUTING](CONTRIBUTING.md)。本地验收结论见 [复核报告](docs/acceptance-review.md)。公开仓库、Mooncakes 和正式申报信息待指定。
+0.3.0，MIT，全部本地保存。见 [验收复核](docs/acceptance-review.md)、[架构](docs/architecture.md)、[维护说明](CONTRIBUTING.md)、[来源](THIRD_PARTY.md)。公开仓库、账号/namespace、线上 CI 和正式报名待相应发布阶段完成。

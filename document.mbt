@@ -156,7 +156,7 @@ pub fn Document::comments(self : Document) -> Comments raise FlacError {
       return decode_comments(block.data)
     }
   }
-  { vendor: "MoonFlacTag/0.2.0", entries: [], }
+  { vendor: "MoonFlacTag/0.3.0", entries: [], }
 }
 
 ///|

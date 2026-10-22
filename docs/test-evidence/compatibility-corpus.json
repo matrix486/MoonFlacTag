@@ -1,0 +1,42 @@
+{
+  "material_date": "2026-10-22",
+  "soundfile": "0.13.1",
+  "libsndfile": "1.2.2",
+  "numpy": "1.26.4",
+  "cases": [
+    {
+      "encoder": "libsndfile FLAC",
+      "subtype": "PCM_S8",
+      "rate": 16000,
+      "channels": 1,
+      "samples": 2400,
+      "complex_comment_bytes": 98498,
+      "compressed_identical": true,
+      "libsndfile_pcm_identical": true,
+      "ffmpeg_pcm_matches": true
+    },
+    {
+      "encoder": "libsndfile FLAC",
+      "subtype": "PCM_16",
+      "rate": 44100,
+      "channels": 2,
+      "samples": 2400,
+      "complex_comment_bytes": 98498,
+      "compressed_identical": true,
+      "libsndfile_pcm_identical": true,
+      "ffmpeg_pcm_matches": true
+    },
+    {
+      "encoder": "libsndfile FLAC",
+      "subtype": "PCM_24",
+      "rate": 48000,
+      "channels": 2,
+      "samples": 2400,
+      "complex_comment_bytes": 98498,
+      "compressed_identical": true,
+      "libsndfile_pcm_identical": true,
+      "ffmpeg_pcm_matches": true
+    }
+  ],
+  "source": "locally generated signal; complex comments encoded independently; no third-party recordings"
+}
