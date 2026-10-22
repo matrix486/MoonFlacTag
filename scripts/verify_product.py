@@ -102,7 +102,7 @@ def main():
             pass
         assert error_code(cli("inspect", work / "missing.flac", ok=False)) == "ENOENT"
         assert error_code(cli("plan", original, "--padding=bad", ok=False)) == "INVALID_ARGUMENT"
-        assert error_code(cli("plan", original, "--set=TITLE=" + "x" * 12000, ok=False)) == "PADDING_NO_SPACE"
+        assert error_code(cli("plan", original, "--set=TITLE=" + "x" * 12000, "--preserve-offset", ok=False)) == "PADDING_NO_SPACE"
         # Inject publication races and interruption through the actual CLI process.
         target = work / "atomic.flac"
         hook = work / "atomic-hook.cjs"

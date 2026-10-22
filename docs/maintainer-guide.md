@@ -21,3 +21,5 @@ metadata_prefix_length 返回下次精确需要的字节数，CLI 决定 read_mo
 测试数量为每后端 31（含 3 文档），循环中的 80 组/512 次分别陈述。FFmpeg 五组与 libsndfile 三组是独立编码路径；后者含约 98 KiB 复杂元数据，并以 soundfile/FFmpeg PCM 对照。性能记录含启动、仪器化和合成后缀，不把单次时间当普遍基准。
 
 新增失败先最小复现，moon fmt / moon info 后跑 acceptance.py；审阅 API 和来源。核心运行无 FFmpeg/Python 依赖，这些仅是开发验证工具。
+
+0.4.0 的可用性改进限定在 CLI：默认规划先 PreserveOffset，只在 NoSpace 时回退 Compact；库 API 默认不变。skip-existing 只跳过 lstat 识别的普通目标，不验证完成内容；report 在 stdout 输出完成后保存，失败不回滚音乐。独立运行包使用 release JS，不改写核心算法，构建时复制实际 core LICENSE；离线 npm 消费不执行生命周期脚本。

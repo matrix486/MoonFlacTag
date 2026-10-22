@@ -142,7 +142,7 @@ def main():
     assert cli("edit", original, tagged, "--set=TITLE=Overwrite", ok=False).returncode != 0
     assert inspect(tagged) == after
     assert cli("inspect", ok=False).returncode != 0
-    assert cli("edit", original, OUT / "no-space.flac", "--set=TITLE=" + "x" * 12000, ok=False).returncode != 0
+    assert cli("edit", original, OUT / "no-space.flac", "--set=TITLE=" + "x" * 12000, "--preserve-offset", ok=False).returncode != 0
     assert not (OUT / "no-space.flac").exists()
     assert original.read_bytes() == source
     outputs = {}

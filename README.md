@@ -2,6 +2,12 @@
 
 纯 MoonBit FLAC 标签与封面编辑库，附 Node.js 命令行工具。支持单文件、目录批量预览/保存，以及 PNG/JPEG 封面管理；原压缩音频逐字节保留，无需重新编码。核心支持 Wasm-GC 和 JavaScript。
 
+## 普通用户安装
+
+已有可直接使用的本地命令行包：解压 `release-local/moonflactag-cli-0.4.0.zip`，Windows 用其中的 `moonflactag.cmd`。只需 Node.js 24+，不需要 MoonBit、Python、FFmpeg 或联网。还提供本地离线 npm 安装包。完整安装、批量恢复和问题处理见 [命令行手册](docs/cli-guide.md)。
+
+开发者重建独立运行包：`python scripts/build_cli.py`。下文保留从源码启动的开发者入口。
+
 ## 单文件使用
 
 需要 MoonBit 和 Node.js，在项目根目录运行：
@@ -15,7 +21,7 @@ moon run cmd/main --target js -- edit fixtures/tone.flac demo-output/covered.fla
 moon run cmd/main --target js -- extract-cover demo-output/covered.flac demo-output/extracted.png --index=0
 ~~~
 
-输出必须是新文件，重复演示请换输出名。inspect 显示音频参数、标签、图片索引和类型；plan 显示编辑后信息、元数据差值和大小，不写文件。默认利用 padding 保持音频偏移，空间不足返回 PADDING_NO_SPACE；--compact 允许移动音频，--padding=N 指定 0..16777215 字节 padding，最后一个 padding 选项生效。
+输出必须是新文件，重复演示请换输出名。inspect 显示音频参数、标签、图片索引和类型；plan 显示编辑后信息、元数据差值和大小，不写文件。CLI 默认 --auto-padding 先尝试保持音频偏移，空间不足自动紧凑编码；--preserve-offset 才要求空间不足时返回 PADDING_NO_SPACE。库 API 默认策略仍保持偏移。--compact 允许移动音频，--padding=N 指定 0..16777215 字节 padding，最后一个 padding 选项生效。
 
 标签支持 --set=KEY=VALUE、--add=KEY=VALUE、--remove=KEY。匹配忽略 ASCII 大小写，保留重复值；Set 替换全部同名值，Add 追加，Remove 删除全部。操作按顺序执行。
 
@@ -31,7 +37,9 @@ moon run cmd/main --target js -- batch edit album-in album-out --recursive --set
 - 默认仅当前目录，--recursive 才遍历子目录；扩展名 .flac 不区分大小写。
 - 保留相对路径，按路径稳定排序；跳过扫描中发现的符号链接。
 - 每个文件分别规划/保存，一个坏文件不阻断其余文件；已有输出不覆盖。
-- stdout 是一份 JSON，含 total / succeeded / failed / skipped_symlinks 和逐文件 results。
+- stdout 是一份 JSON，含 total / succeeded / failed / skipped / skipped_symlinks 和逐文件 results。
+- --skip-existing 仅 batch edit 可用，跳过已有普通输出文件，不比较内容；适合以相同选项重跑任务。改变标签应换新输出目录。
+- --progress 在 stderr 输出逐文件进度 JSON 行；--report=NEW.json 保存 UTF-8 结果，包括部分失败结果；报告不覆盖。
 - 全部成功退出 0，有失败退出 1；成功文件会保留，整批不是回滚事务。
 - 预览与保存分别读取当前输入，预览不会冻结文件或创建输出目录。
 
@@ -58,7 +66,7 @@ PNG/JPEG 头用于读取尺寸和色深，不解码像素或验证全部图片�
 
 普通失败会尝试清理临时文件。强制退出时目标不会出现半成品，但可能留下 .moonflactag-*.tmp 私有临时文件，确认没有任务使用后可自行删除。原子可见性不等于断电持久性；源文件未锁定。
 
-单文件错误输出 stderr JSON：code、message、operation、path、offset；旧 error 文本字段保留。自定义编号包括 INVALID_ARGUMENT、FLAC_INVALID、METADATA_LIMIT、PADDING_NO_SPACE、PICTURE_NOT_FOUND、PATH_OVERLAP、BATCH_LIMIT、SOURCE_CHANGED 等；文件 I/O 使用 Node 原始编号，例如 ENOENT、EEXIST、EPERM。offset 为相关解析器的位置，可能为空，不保证都是全文件偏移。完整约定见 [错误说明](docs/errors.md)。
+单文件操作失败输出 stderr JSON：code、message、operation、path、offset；旧 error 文本字段保留。自定义编号包括 INVALID_ARGUMENT、FLAC_INVALID、METADATA_LIMIT、PADDING_NO_SPACE、PICTURE_NOT_FOUND、PATH_OVERLAP、BATCH_LIMIT、SOURCE_CHANGED 等；文件 I/O 使用 Node 原始编号，例如 ENOENT、EEXIST、EPERM。offset 为相关解析器的位置，可能为空，不保证都是全文件偏移。完整约定见 [错误说明](docs/errors.md)。
 
 ## 库 API
 
@@ -93,7 +101,7 @@ python scripts/acceptance.py
 - 268439553 bytes 合成大文件、六类 I/O 注入、发布竞态和强制退出。
 - 性能基线测量源读取量、含启动的耗时和 Node 峰值 RSS。64 MiB 合成样本 inspect 只读 8333 bytes 元数据，非通用速度承诺。
 
-记录在 docs/test-evidence。大型样本检查后删除，语料均为本地生成信号和独立元数据，不使用第三方录音。实际脚本与固定工具链 CI 已准备，CI 尚未在线运行。
+独立 CLI zip 在隔离路径运行并完成 npm tgz 离线安装/卸载；自动空间、批量进度/重跑和 UTF-8 报告也通过独立流程检查。记录在 docs/test-evidence。大型样本检查后删除，语料均为本地生成信号和独立元数据，不使用第三方录音。实际脚本与固定工具链 CI 已准备，CI 尚未在线运行。
 
 ## 边界与交付
 
@@ -101,4 +109,4 @@ python scripts/acceptance.py
 
 不验证音频帧 CRC / MD5，不解码图片，不支持 Ogg-FLAC / 前置 ID3。SEEKTABLE 检查顺序和占位符，但不核对目标帧；CUESHEET 内容保留为不透明 bytes。
 
-0.3.0，MIT，全部本地保存。见 [验收复核](docs/acceptance-review.md)、[架构](docs/architecture.md)、[维护说明](CONTRIBUTING.md)、[来源](THIRD_PARTY.md)。公开仓库、账号/namespace、线上 CI 和正式报名待相应发布阶段完成。
+0.4.0，MIT，全部本地保存。见 [验收复核](docs/acceptance-review.md)、[架构](docs/architecture.md)、[维护说明](CONTRIBUTING.md)、[来源](THIRD_PARTY.md)。公开仓库、账号/namespace、线上 CI 和正式报名待相应发布阶段完成。

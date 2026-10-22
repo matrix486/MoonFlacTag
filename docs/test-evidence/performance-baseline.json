@@ -5,19 +5,19 @@
       "operation": "inspect",
       "synthetic_file_bytes": 67117197,
       "metadata_bytes": 8333,
-      "wall_seconds_including_node_startup": 0.081832,
+      "wall_seconds_including_node_startup": 0.130361,
       "source_bytes_read": 8333,
       "read_calls": 7,
-      "node_max_rss_kib": 39420
+      "node_max_rss_kib": 39212
     },
     {
       "operation": "edit",
       "synthetic_file_bytes": 67117197,
       "metadata_bytes": 8333,
-      "wall_seconds_including_node_startup": 0.150935,
+      "wall_seconds_including_node_startup": 0.273078,
       "source_bytes_read": 67117197,
       "read_calls": 71,
-      "node_max_rss_kib": 43344
+      "node_max_rss_kib": 43724
     }
   ],
   "method": "One local instrumented run per operation; sparse synthetic suffix; timing includes Node startup and read counters. RSS is Node resourceUsage maxRSS, not a general performance guarantee."

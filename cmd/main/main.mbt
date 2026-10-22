@@ -3,7 +3,7 @@ extern "js" fn arguments() -> FixedArray[String] =
   #|() => process.argv.slice(2)
 
 ///|
-const Usage : String = "usage:\n  inspect INPUT\n  plan INPUT [OPTIONS]\n  edit INPUT OUTPUT [OPTIONS]\n  extract-cover INPUT OUTPUT [--index=N]\n  batch plan INPUT_DIR [--recursive] [OPTIONS]\n  batch edit INPUT_DIR OUTPUT_DIR [--recursive] [OPTIONS]\nOPTIONS: --set=KEY=VALUE --add=KEY=VALUE --remove=KEY --compact --padding=N\nARTWORK: --picture-kind=N --cover=PNG_OR_JPEG --append-cover=FILE --remove-picture-kind=N --remove-pictures\nLegacy --cover-png=FILE still replaces all pictures. New --cover replaces only its selected kind (default 3).\nOUTPUT must be a new path. plan never writes. --help / --version"
+const Usage : String = "MoonFlacTag - FLAC metadata editor\nUsage: moonflactag COMMAND ...\n  inspect INPUT\n  plan INPUT [OPTIONS]\n  edit INPUT OUTPUT [OPTIONS]\n  extract-cover INPUT OUTPUT [--index=N]\n  batch plan INPUT_DIR [--recursive] [OPTIONS]\n  batch edit INPUT_DIR OUTPUT_DIR [--recursive] [--skip-existing] [OPTIONS]\nTags: --set=KEY=VALUE --add=KEY=VALUE --remove=KEY\nPadding: --auto-padding (default) --preserve-offset --compact --padding=N\nArtwork: --picture-kind=N --cover=PNG_OR_JPEG --append-cover=FILE\n         --remove-picture-kind=N --remove-pictures --cover-png=FILE (legacy clear-all)\nBatch: --progress (stderr) --skip-existing (edit only, skips regular files without comparison)\nReport: --report=NEW_FILE.json saves UTF-8 JSON, including partial batch results.\nOUTPUT must be new. Output parents are created. Automatic padding preserves offset when possible.\n--help / --version. Commands accept --option=value; quote the whole argument if it contains spaces."
 
 ///|
 fn[T] with_source(path : String, action : (Source) -> T raise) -> T raise {
@@ -76,15 +76,7 @@ fn process_source(
 ) -> Json raise {
   with_source(input, source => {
     let doc = @flac.parse(read_metadata(source))
-    let plan = if opts.pictures.is_empty() {
-      doc.plan(opts.tags, padding=opts.padding)
-    } else {
-      doc.plan(
-        opts.tags,
-        pictures=@flac.edit_pictures(doc.pictures(), opts.pictures),
-        padding=opts.padding,
-      )
-    }
+    let plan = make_plan(doc, opts)
     let json = report(
       @flac.parse(plan.metadata),
       source_size(source) - doc.audio_offset().to_double(),
@@ -108,17 +100,32 @@ fn batch(
   input : String,
   output : String?,
   ops : ArrayView[String],
-) -> Unit raise {
-  let opts = parse_options(ops, true)
+) -> Json raise {
+  let opts = parse_options(ops, true, allow_skip=output is Some(_))
   let scan = scan_directory(input, output.unwrap_or(""), opts.recursive)
   check_io(scan_error(scan))
   let rows : Array[Json] = []
   let mut succeeded = 0
   let mut failed = 0
+  let mut skipped = 0
   for rel in scan_files(scan) {
     let input = scan_path(scan, rel, false)
     let output = output.map(_ => scan_path(scan, rel, true))
+    if opts.progress {
+      emit_progress(rows.length() + 1, scan_files(scan).length(), rel)
+    }
     try {
+      if output is Some(file) && should_skip(file, opts.skip_existing) {
+        rows.push({
+          "relative": rel.to_json(),
+          "input": input.to_json(),
+          "output": output.to_json(),
+          "status": "skipped",
+          "reason": "OUTPUT_EXISTS",
+        })
+        skipped += 1
+        continue
+      }
       let result = process_source(input, output, opts, true)
       rows.push({
         "relative": rel.to_json(),
@@ -146,17 +153,18 @@ fn batch(
     "total": rows.length().to_json(),
     "succeeded": succeeded.to_json(),
     "failed": failed.to_json(),
+    "skipped": skipped.to_json(),
     "skipped_symlinks": scan_skipped(scan).to_json(),
     "results": rows.to_json(),
   }
-  println(json.stringify())
   if failed > 0 {
     exit_failure()
   }
+  json
 }
 
 ///|
-fn extract(input : String, output : String, index : Int) -> Unit raise {
+fn extract(input : String, output : String, index : Int) -> Json raise {
   with_source(input, source => {
     let pictures = @flac.parse(read_metadata(source)).pictures()
     guard pictures.get(index) is Some(picture) else {
@@ -164,6 +172,7 @@ fn extract(input : String, output : String, index : Int) -> Unit raise {
         "PICTURE_NOT_FOUND", "extract", input, "picture index does not exist",
       )
     }
+    check_io(ensure_parent(output))
     check_io(copy_output(source, output, picture.data, 0, false))
     let json : Json = {
       "output": output.to_json(),
@@ -172,43 +181,47 @@ fn extract(input : String, output : String, index : Int) -> Unit raise {
       "media_type": picture.media_type.to_json(),
       "bytes": picture.data.length().to_json(),
     }
-    println(json.stringify())
+    json
   })
 }
 
 ///|
-fn run(args : Array[String]) -> Unit raise {
+fn run(args : Array[String]) -> String raise {
   match args {
-    ["--help"] | ["help"] => println(Usage)
-    ["--version"] => println("MoonFlacTag 0.3.0")
+    []
+    | ["--help"]
+    | ["help"]
+    | ["inspect", "--help"]
+    | ["plan", "--help"]
+    | ["edit", "--help"]
+    | ["extract-cover", "--help"]
+    | ["batch", "--help"]
+    | ["batch", "plan", "--help"]
+    | ["batch", "edit", "--help"] => Usage
+    ["--version"] => "MoonFlacTag 0.4.0"
     ["inspect", input] =>
       with_source(input, source => {
         let doc = @flac.parse(read_metadata(source))
-        println(
-          report(
-            doc,
-            source_size(source) - doc.audio_offset().to_double(),
-            doc.audio_offset(),
-            false,
-          ).stringify(),
-        )
+        report(
+          doc,
+          source_size(source) - doc.audio_offset().to_double(),
+          doc.audio_offset(),
+          false,
+        ).stringify()
       })
     ["plan", input, .. ops] =>
-      println(
-        process_source(input, None, parse_options(ops, false), false).stringify(),
-      )
+      process_source(input, None, parse_options(ops, false), false).stringify()
     ["edit", input, output, .. ops] =>
-      println(
-        process_source(input, Some(output), parse_options(ops, false), false).stringify(),
-      )
-    ["batch", "plan", input, .. ops] => batch(input, None, ops)
-    ["batch", "edit", input, output, .. ops] => batch(input, Some(output), ops)
-    ["extract-cover", input, output] => extract(input, output, 0)
+      process_source(input, Some(output), parse_options(ops, false), true).stringify()
+    ["batch", "plan", input, .. ops] => batch(input, None, ops).stringify()
+    ["batch", "edit", input, output, .. ops] =>
+      batch(input, Some(output), ops).stringify()
+    ["extract-cover", input, output] => extract(input, output, 0).stringify()
     ["extract-cover", input, output, option] => {
       guard option.strip_prefix("--index=") is Some(value) else {
         raise CliFailure("INVALID_ARGUMENT", "options", "", Usage)
       }
-      extract(input, output, decimal(value, 4095))
+      extract(input, output, decimal(value, 4095)).stringify()
     }
     _ => raise CliFailure("INVALID_ARGUMENT", "options", "", Usage)
   }
@@ -216,7 +229,7 @@ fn run(args : Array[String]) -> Unit raise {
 
 ///|
 fn main {
-  run(Array::from_iter(arguments().iter())) catch {
+  run_with_report(Array::from_iter(arguments().iter())) catch {
     error => emit_failure(error_json(error).stringify())
   }
 }

@@ -1,4 +1,4 @@
-# 三分钟本地演示 - 0.3.0
+# 三分钟本地演示 - 0.4.0
 
 需要 MoonBit/Node，在项目根目录新建 demo-output。输出名需未占用。
 
@@ -23,3 +23,5 @@ moon run cmd/main --target js -- extract-cover demo-output/demo-covered.flac dem
 140-180 秒：展示 31 项双后端测试、FFmpeg 与 libsndfile 两种编码路径、512 次突变和复杂标签对照；显示 64 MiB 文件 inspect 只读 8333 bytes。说明完整临时文件再发布目标的协议与强制退出测试。
 
 一键复现 python scripts/acceptance.py；统计与素材边界见 acceptance-review.md。
+
+普通用户可直接解压 release-local 中的独立 zip，用 moonflactag.cmd 运行同名命令；无需 moon run 前缀。安装/完整专辑整理/重跑演示见 cli-guide.md。单独展示 --report=NEW.json 的 UTF-8 报告与 --skip-existing 恢复结果。

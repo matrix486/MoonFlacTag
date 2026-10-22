@@ -2,8 +2,10 @@
 priv struct EditOptions {
   tags : Array[@flac.TagEdit]
   pictures : Array[@flac.PictureEdit]
-  padding : @flac.Padding
+  padding : @flac.Padding?
   recursive : Bool
+  skip_existing : Bool
+  progress : Bool
 }
 
 ///|
@@ -51,19 +53,30 @@ fn load_picture(path : String, kind : Int) -> @flac.Picture raise {
 fn parse_options(
   ops : ArrayView[String],
   allow_recursive : Bool,
+  allow_skip? : Bool = false,
 ) -> EditOptions raise {
   let tags : Array[@flac.TagEdit] = []
   let pictures : Array[@flac.PictureEdit] = []
-  let mut padding : @flac.Padding = PreserveOffset
+  let mut padding : @flac.Padding? = None
   let mut kind = 3
   let mut recursive = false
+  let mut skip_existing = false
+  let mut progress = false
   for op in ops {
     if op == "--compact" {
-      padding = Compact
+      padding = Some(Compact)
+    } else if op == "--preserve-offset" {
+      padding = Some(PreserveOffset)
+    } else if op == "--auto-padding" {
+      padding = None
+    } else if op == "--skip-existing" && allow_skip {
+      skip_existing = true
+    } else if op == "--progress" && allow_recursive {
+      progress = true
     } else if op == "--recursive" && allow_recursive {
       recursive = true
     } else if op.strip_prefix("--padding=") is Some(value) {
-      padding = Exact(decimal(value, 16777215))
+      padding = Some(Exact(decimal(value, 16777215)))
     } else if op.strip_prefix("--picture-kind=") is Some(value) {
       kind = decimal(value, 20)
     } else if op == "--remove-pictures" {
@@ -111,5 +124,5 @@ fn parse_options(
       )
     }
   }
-  { tags, pictures, padding, recursive, }
+  { tags, pictures, padding, recursive, skip_existing, progress, }
 }

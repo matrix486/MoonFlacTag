@@ -27,7 +27,7 @@ def main():
         assert isinstance(json.loads(result.stderr)["error"], str)
         assert b"at Module" not in result.stderr
     assert cli("--help").returncode == 0
-    assert "0.3.0" in cli("--version").stdout.decode()
+    assert "0.4.0" in cli("--version").stdout.decode()
     # Inject ordinary host failures, not fake success paths in the core library.
     hook = work / "fault.cjs"
     base_hook = r'''

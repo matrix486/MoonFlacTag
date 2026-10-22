@@ -8,7 +8,7 @@ parse 首块必须为 34 字节 STREAMINFO；STREAMINFO/VORBIS_COMMENT/SEEKTABLE
 
 Reader 中 Vorbis comment 长度与计数是小端，块头/PICTURE 是大端。u32 先比较剩余 bytes 再转 Int；文本严格 UTF-8。字段编码前验证 UTF-16 surrogate，避免编码器假设被破坏。
 
-标签键匹配忽略 ASCII 大小写，Set 删除同名后追加，Add 保留已有，Remove 删除全部。vendor 原样保留，无标签时为 MoonFlacTag/0.3.0。
+标签键匹配忽略 ASCII 大小写，Set 删除同名后追加，Add 保留已有，Remove 删除全部。vendor 原样保留，无标签时为 MoonFlacTag/0.4.0。
 
 edit_pictures 对新数组按顺序操作：SetPicture 只替换同 kind，AddPicture 追加，RemovePictureKind 删除同 kind，ClearPictures 清空。其他图片原字节保留，图标唯一性仍检查。picture_from_image 读取 PNG IHDR / JPEG SOF，生成 MIME、尺寸、色深，不证明像素/CRC 完整。
 
@@ -21,3 +21,5 @@ Document.plan 只生成元数据，rewrite 在同一 plan 后追加原内存音�
 诊断由 MoonBit 将 FlacError / CliError 转成固定 JSON 字段；底层 I/O code 保留。批量错误内嵌源路径。Node 仅承担宿主操作，不解析标签语义。
 
 测试层相互独立：手工 golden、确定性突变/性质矩阵、FFmpeg 对照、libsndfile 编码/PCM 对照、宿主故障与发布竞态、实际 zip 独立消费和仪器化性能记录。
+
+0.4.0 的自动空间属于 CLI 工作流：显式 Padding 直接使用，默认只捕获 NoSpace 再以 Compact 重新规划，其他错误继续传播。核心 Document.plan 默认仍是 PreserveOffset。batch 在读取输入前用 lstat 检查 --skip-existing，只有普通目标文件计入 skipped；不验证其内容。结果先输出 stdout，再以同目录临时文件+硬链接保存报告，报告后期失败不隐藏已完成结果。独立运行包只对官方编译器 release JS 添加 Node 版本检查与入口，不另写解析/编辑实现。
