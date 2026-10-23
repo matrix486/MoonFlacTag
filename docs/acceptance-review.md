@@ -1,6 +1,6 @@
 # 验收准备复核 - 0.4.0
 
-材料日期：2026-10-23。完整本地验收已通过；正式发布目标为 matrix486/MoonFlacTag 与 matrix486/moonflactag@0.4.0。远端 CI 与 registry 消费结果完成后补入发布记录，官方报名/审核未执行。
+材料日期：2026-10-23。完整本地验收已通过；正式发布目标为 matrix486/MoonFlacTag 与 matrix486/moonflactag@0.4.0。远端 CI 与公共 registry 消费已通过，证据见发布记录；官方报名/审核未执行。
 
 官网要求沿用 2026-10-19 已核对的 [十月赛页面源码](https://github.com/moonbitlang/Hackathon2026/blob/main/src/App.tsx)：MoonBit 主体、公开追踪、可运行/文档/测试、实质工作、开源合规、参赛者理解 AI 产物。本轮是同一项目继续完善，不重新声称查过新的章程。发布 GitHub ID 与 Mooncakes 账号均已由用户指定为 matrix486；其他报名资料不猜填。
 
@@ -30,7 +30,8 @@
 |实际分发|0.4.0 zip 解压，每后端 2 消费测试，解压 CLI inspect/plan/batch plan 成功|package-consumption.json|
 |完整使用流程|默认空间自动回退、严格模式覆盖、创建父目录、批量重跑/进度、UTF-8 报告与报告竞态|cli-workflows.json|
 |独立运行包|只需 Node，真实 zip 跨目录运行；实际 tgz 离线安装、命令入口和卸载|cli-distribution.json|
-|统一复现|python scripts/acceptance.py 与同入口 CI 配置|本地通过，远端尚未运行|
+|统一复现|python scripts/acceptance.py 与同入口 CI 配置|本地与 Ubuntu 24.04 线上 CI 通过|
+|确切 registry 消费|matrix486/moonflactag@0.4.0 公共下载；两后端各 2 测试及下载 CLI 通过|registry-consumption.json|
 |申报演示|精简 Markdown、三分钟步骤与新一页 PDF|本地材料|
 
 JSON 记录均在 docs/test-evidence，实际归档消费记录按渠道边界不嵌入它自己描述的 zip。本轮文件保存集成因受限沙箱禁止硬链接，使用同一项目目录的本机权限执行；未联网、未外发。

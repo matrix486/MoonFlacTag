@@ -14,6 +14,6 @@ Wasm-GC / JS 各 31 测试（含 3 文档）、格式/check/build 通过；512 �
 
 MIT，生成素材和 AI 辅助范围明确。累计元数据 16 MiB/4096 块；不校验音频帧 CRC/MD5、不解码图片、不支持 Ogg-FLAC/ID3 前缀。保存要求硬链接支持；原子可见性不代表断电持久性。
 
-三分钟演示见 docs/demo.md，实际证据见 docs/acceptance-review.md；同一验收入口与 CI、维护者讲解已准备。源码、验证、材料就绪；按授权进行 GitHub/Mooncakes 发布，最终 CI 和 registry 消费证据见 docs/release.md。正式报名或审核未执行。
+三分钟演示见 docs/demo.md，实际证据见 docs/acceptance-review.md；同一验收入口与 CI、维护者讲解已准备。源码、验证、材料就绪；GitHub/Mooncakes 已发布，Ubuntu CI 与公共 registry 确切 0.4.0 安装通过；证据见 docs/release.md。正式报名或审核未执行。
 
 规则依据保留 [官方十月赛源码](https://github.com/moonbitlang/Hackathon2026/blob/main/src/App.tsx)，格式参考 [RFC 9639 §8](https://www.rfc-editor.org/rfc/rfc9639.html)。

@@ -1,0 +1,14 @@
+{
+  "material_date": "2026-10-23",
+  "module": "matrix486/moonflactag",
+  "version": "0.4.0",
+  "source": "public registry via moon add exact version; no moon.work or local module substitution",
+  "registry_index_refresh_skipped": true,
+  "downloaded_manifest": "exact name and version verified",
+  "consumers": {
+    "wasm-gc": "Total tests: 2, passed: 2, failed: 0.",
+    "js": "Total tests: 2, passed: 2, failed: 0."
+  },
+  "downloaded_cli": "inspect passed",
+  "install_output": "Downloading matrix486/moonflactag@0.4.0"
+}

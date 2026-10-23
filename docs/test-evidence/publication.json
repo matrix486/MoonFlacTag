@@ -1,0 +1,22 @@
+{
+  "material_date": "2026-10-23",
+  "repository": "https://github.com/matrix486/MoonFlacTag",
+  "github_login": "matrix486",
+  "github_user_id": 332895426,
+  "commit_author": "matrix486",
+  "commit_committer": "matrix486",
+  "mooncakes_login": "matrix486",
+  "module": "matrix486/moonflactag",
+  "version": "0.4.0",
+  "package_source_commit": "a391440eeb5b4942b65313003b35e6e06554c0ff",
+  "source_ci": {
+    "run_id": 39918730181,
+    "conclusion": "success",
+    "url": "https://github.com/matrix486/MoonFlacTag/actions/runs/39918730181"
+  },
+  "published_archive_files": 67,
+  "registry_sha256": "8d1eb98f954d330bf5309cd253ec77ed1e3aca03b0d43c39ea46f182b3538bf0",
+  "registry_consumer": "two tests per wasm-gc/js target plus downloaded CLI; passed",
+  "github_and_registry_file_boundaries": "tracked tree, pending history and actual package/CLI archives reviewed; private folders excluded",
+  "contest_submission": "not performed"
+}

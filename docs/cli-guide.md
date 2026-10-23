@@ -14,7 +14,7 @@
 .\moonflactag.cmd inspect .\examples\tone.flac
 ~~~
 
-也可从任意目录通过完整路径调用 `moonflactag.cmd`；输入、输出、图片和报告的相对路径均相对于你当前的工作目录，不是安装目录。跨平台入口是 `node /path/to/package/bin/moonflactag.cjs`；Linux/macOS 也可用 `sh /path/to/package/moonflactag`。仅 Windows 本机已实测，其他系统由 CI 配置待验证。
+也可从任意目录通过完整路径调用 `moonflactag.cmd`；输入、输出、图片和报告的相对路径均相对于你当前的工作目录，不是安装目录。跨平台入口是 `node /path/to/package/bin/moonflactag.cjs`；Linux/macOS 也可用 `sh /path/to/package/moonflactag`。Windows 本机与 Ubuntu 24.04 GitHub Actions 均已验证完整流程；macOS 尚未实测。
 
 如果已经使用 npm，可以只在选定目录离线安装，以下不修改系统全局安装：
 
