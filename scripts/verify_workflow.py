@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 import subprocess
 import tempfile
-from verify import ROOT, OUT, EVIDENCE, cli, metadata
+from verify import ROOT, OUT, EVIDENCE, cli, metadata, material_date
 
 
 def main():
@@ -71,7 +71,7 @@ def main():
         bad_destination = json.loads(cli("batch", "edit", inputs, outputs, "--recursive", "--skip-existing", ok=False).stdout)
         assert bad_destination["failed"] == 1 and bad_destination["skipped"] == 2
         assert cli().returncode == 0 and cli("batch", "edit", "--help").returncode == 0
-    result = {"material_date": "2026-10-22", "automatic_padding_and_strict_override": "passed", "nested_output_parents": "passed", "utf8_reports_and_preflight_conflicts": "passed", "partial_batch_progress_and_restart": "passed", "nonregular_skip_rejected": "passed"}
+    result = {"material_date": material_date(), "automatic_padding_and_strict_override": "passed", "nested_output_parents": "passed", "utf8_reports_and_preflight_conflicts": "passed", "partial_batch_progress_and_restart": "passed", "nonregular_skip_rejected": "passed"}
     (EVIDENCE / "cli-workflows.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(result, indent=2))
 

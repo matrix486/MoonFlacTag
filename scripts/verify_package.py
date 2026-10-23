@@ -5,6 +5,7 @@ import re
 import subprocess
 import tempfile
 import zipfile
+from verify import material_date
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -19,7 +20,7 @@ def run(args, cwd):
 def main():
     version = re.search(r'^version\s*=\s*"([^"]+)"', (ROOT / "moon.mod").read_text(encoding="utf-8"), re.M)[1]
     packaging = run(["moon", "package"], ROOT)
-    archive = ROOT / f"_build/publish/local-moonflactag-{version}.zip"
+    archive = ROOT / f"_build/publish/matrix486-moonflactag-{version}.zip"
     work = ROOT / "release-local"
     work.mkdir(exist_ok=True)
     with zipfile.ZipFile(archive) as z:
@@ -41,8 +42,8 @@ def main():
             consumer = tmp / "consumer"
             consumer.mkdir()
             (tmp / "moon.work").write_text('members = ["library", "consumer"]\n', encoding="utf-8")
-            (consumer / "moon.mod").write_text(f'name = "local/flactag_consumer"\nversion = "0.0.1"\nimport {{ "local/moonflactag@{version}" }}\n', encoding="utf-8")
-            (consumer / "moon.pkg").write_text('import { "local/moonflactag" @flac } for "test"\n', encoding="utf-8")
+            (consumer / "moon.mod").write_text(f'name = "local/flactag_consumer"\nversion = "0.0.1"\nimport {{ "matrix486/moonflactag@{version}" }}\n', encoding="utf-8")
+            (consumer / "moon.pkg").write_text('import { "matrix486/moonflactag" @flac } for "test"\n', encoding="utf-8")
             fixture = (ROOT / "fixtures/tone.flac").read_bytes()
             literal = 'b"' + ''.join(f'\\x{b:02x}' for b in fixture) + '"'
             source = '''///|
@@ -87,7 +88,7 @@ test "archive selective artwork and prefix APIs" {
             assert json.loads(planned.stdout)["preview"] is True
             batch_plan = subprocess.run(["moon", "run", "cmd/main", "--target", "js", "--", "batch", "plan", str(library / "fixtures"), "--set=TITLE=Packaged batch"], cwd=library, capture_output=True, check=True)
             assert json.loads(batch_plan.stdout)["total"] == 1
-    result = {"material_date": "2026-10-22", "version": version, "archive": archive.name, "file_count": len(entries), "archive_bytes": archive.stat().st_size, "consumers": results, "extracted_cli": "inspect, plan and batch plan passed", "distribution_exclusions": "passed", "packaging_output": packaging.replace(str(ROOT), "<project>")}
+    result = {"material_date": material_date(), "version": version, "archive": archive.name, "file_count": len(entries), "archive_bytes": archive.stat().st_size, "consumers": results, "extracted_cli": "inspect, plan and batch plan passed", "distribution_exclusions": "passed", "packaging_output": packaging.replace(str(ROOT), "<project>")}
     (ROOT / "docs/test-evidence/package-consumption.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, indent=2))
 

@@ -53,6 +53,10 @@ def pcm(path):
     return run("ffmpeg", "-v", "error", "-i", path, "-map", "0:a:0", "-f", "s16le", "-").stdout
 
 
+def material_date():
+    return datetime.now(ZoneInfo("Asia/Shanghai")).date().isoformat()
+
+
 def main():
     for tool in ["moon", "node", "ffmpeg", "ffprobe"]:
         if not shutil.which(tool):
@@ -151,7 +155,7 @@ def main():
     assert outputs["wasm-gc"] == outputs["js"]
     assert outputs["js"].startswith(b"664c6143")
     result = {
-        "material_date": datetime.now(ZoneInfo("Asia/Shanghai")).date().isoformat(),
+        "material_date": material_date(),
         "toolchain": run("moon", "version", "--all", "--no-path").stdout.decode().strip(),
         "ffmpeg": run("ffmpeg", "-version").stdout.decode().splitlines()[0],
         "node": run("node", "--version").stdout.decode().strip(),

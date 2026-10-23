@@ -1,5 +1,5 @@
 {
-  "material_date": "2026-10-22",
+  "material_date": "2026-10-23",
   "artwork": "PNG/JPEG headers, selective replacement, append, remove, exact export, legacy replacement passed",
   "batch": "preview, recursion, stable ordering, partial failure, collisions, disjoint roots, empty directories passed",
   "symlinks": "skipped without traversal",

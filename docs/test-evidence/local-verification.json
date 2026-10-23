@@ -1,16 +1,16 @@
 {
-  "material_date": "2026-10-22",
+  "material_date": "2026-10-23",
   "toolchain": "moon 0.1.20260915 (2e1a46d 2026-09-15)\nmoonc v0.10.13+cbb11c36f (2026-09-15)\nmoonc moonrun 0.1.20260915 (2e1a46d 2026-09-15)\n\nFeature flags enabled: rr_moon_mod,rr_moon_pkg",
   "ffmpeg": "ffmpeg version 2026-03-09-git-9b7439c31b-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
   "node": "v24.19.0",
   "checks": {
     "moon fmt --check": "Finished. moon: ran 25 tasks, now up to date",
-    "moon check --target wasm-gc --warn-list +73 --deny-warn": "Finished. moon: ran 3 tasks, now up to date",
+    "moon check --target wasm-gc --warn-list +73 --deny-warn": "Finished. moon: ran 4 tasks, now up to date",
     "moon test --target wasm-gc --deny-warn": "Total tests: 31, passed: 31, failed: 0.",
     "moon build --target wasm-gc --deny-warn": "Finished. moon: ran 3 tasks, now up to date",
-    "moon check --target js --warn-list +73 --deny-warn": "Finished. moon: ran 4 tasks, now up to date",
+    "moon check --target js --warn-list +73 --deny-warn": "Finished. moon: ran 6 tasks, now up to date",
     "moon test --target js --deny-warn": "Total tests: 31, passed: 31, failed: 0.",
-    "moon build --target js --deny-warn": "Finished. moon: no work to do",
+    "moon build --target js --deny-warn": "Finished. moon: ran 5 tasks, now up to date",
     "moon info --target wasm-gc": "Finished. moon: ran 2 tasks, now up to date"
   },
   "cross_backend_plan_output_identical": true,

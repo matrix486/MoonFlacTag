@@ -4,7 +4,7 @@ import struct
 import tempfile
 import numpy as np
 import soundfile as sf
-from verify import ROOT, OUT, EVIDENCE, run, cli, inspect, metadata
+from verify import ROOT, OUT, EVIDENCE, run, cli, inspect, metadata, material_date
 
 
 def block(kind, data, last=False):
@@ -56,7 +56,7 @@ def main():
             rows.append({"encoder":"libsndfile FLAC", "subtype":subtype,"rate":rate,"channels":channels,
                          "samples":n,"complex_comment_bytes":len(comments(vendor,entries)),
                          "compressed_identical":True,"libsndfile_pcm_identical":True,"ffmpeg_pcm_matches":True})
-    result = {"material_date":"2026-10-22","soundfile":sf.__version__,"libsndfile":sf.__libsndfile_version__,
+    result = {"material_date":material_date(),"soundfile":sf.__version__,"libsndfile":sf.__libsndfile_version__,
               "numpy":np.__version__,"cases":rows,
               "source":"locally generated signal; complex comments encoded independently; no third-party recordings"}
     (EVIDENCE/"compatibility-corpus.json").write_text(json.dumps(result,indent=2)+"\n",encoding="utf-8")

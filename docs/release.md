@@ -1,23 +1,18 @@
-# 本地交付 0.4.0
+# 发布记录 — 0.4.0
 
-2026-10-22，local/moonflactag，MIT。用户要求继续保留本地，未指定公开仓库/作者/注册表 namespace。
+发布准备日期：2026-10-23（Asia/Shanghai）。GitHub owner、上传账号、当前发布提交 author/committer 与 Mooncakes 登录者均为 matrix486。GitHub 已核对用户 ID 332895426；提交邮箱使用该账号的官方 noreply。此前中性本地开发提交保持原有时间和署名，首次公开时间不倒填。
 
-0.4.0 新增：Node 独立运行 zip 与离线 npm tgz；自动空间策略及显式严格策略；批量 --skip-existing / --progress；UTF-8 完成报告及冲突处理；单文件/封面导出自动创建父目录。完整说明见 docs/cli-guide.md。
+源码仓库：https://github.com/matrix486/MoonFlacTag
+模块：matrix486/moonflactag@0.4.0，MIT。
+发布文档：https://mooncakes.io/docs/matrix486/moonflactag@0.4.0
+独立 CLI 附件目标：https://github.com/matrix486/MoonFlacTag/releases/tag/v0.4.0
 
-既有能力：目录批量预览/保存与逐文件结果；PNG/JPEG、按类型保留/替换/追加/删除及导出；元数据精确增量读取；结构化错误；临时文件无覆盖原子发布；第二编码路径和性能记录。原 parse/rewrite/plan API 与旧 --cover-png 全替换语义保留。
+完整本地验收已通过，正式 namespace 迁移后重新执行相同矩阵。线上 CI、实际 Mooncakes 发布与 registry 消费在完成后追加结果；当前不将准备步骤标成已发布。
 
-工具链仍为 moon 0.1.20260915、moonc v0.10.13+cbb11c36f、Node v24.19.0，Windows 实测。开发对照使用 FFmpeg、soundfile 0.13.1 / libsndfile 1.2.2 / numpy 1.26.4。运行库不依赖这些 Python/媒体工具。
+能力与本地历史：0.1.0 首次实现；0.2.0 增加规划和分块复制；0.3.0 增加批量/选择性封面/原子发布及第二编码路径；0.4.0 提供 Node 独立包、自动空间、批量恢复/进度、UTF-8 报告。核心 Wasm-GC/JS 各 31 测试，独立库消费者各 2 测试；8 组媒体及故障验证不与测试计数混加。
 
-两后端各 31 项测试（含 3 文档测试）、跨后端示例一致；FFmpeg 五组加 libsndfile 三组，复杂标签和 PCM 对照通过；批量/封面/发布竞态/强制退出、大文件与六类故障通过；实际归档消费各 2 项和解压 CLI 通过。一键入口 python scripts/acceptance.py。
+库归档仅含源码、API、测试、必要 fixture、文档和复现脚本，排除 Git、工具链、缓存、研究抓取、私有台账、PDF 与临时消费工程。实际归档消费记录在 docs/test-evidence/package-consumption.json，该记录不嵌入其所描述的包。独立 CLI 是单独的产品构建附件，附项目与 MoonBit core LICENSE，不包含工具链或开发依赖。
 
-性能是本机单次仪器化基线：64 MiB 合成文件 inspect 只读 8333 bytes；具体耗时、读取量、Node maxRSS 见 performance-baseline.json，不作普遍速度承诺。
+目标保存要求硬链接；已有输出不覆盖。强制退出可遗留私有临时文件，不保证断电持久性。其他功能边界和完整操作见 README 及 cli-guide。
 
-归档 _build/publish/local-moonflactag-0.4.0.zip，含源码、公开 API、CLI、测试、必要素材、文档和复现脚本；排除研究原件、工具链、生成大文件、私有台账、Git、PDF 与 CI 配置。package-consumption.json 记录当次真实清单/结果，排除其自己描述的库归档。repository 待指定的打包提示如实保留。
-
-保存要求目标目录支持硬链接。内容写完后原子发布目标，已有/竞态目标不覆盖；普通失败清理，强制退出可留私有临时文件，不承诺断电持久性。
-
-历史：0.1.0（2026-10-17）首次本地交付，各后端 16 测试；0.2.0（2026-10-19）规划与分块复制，各后端 23 测试。历史记录保留，不补造公开时间。
-
-待发布事项：真实身份与 namespace、公开开发记录、线上 CI、确切 registry 安装和正式报名/官方审核。
-
-独立工具交付：release-local/moonflactag-cli-0.4.0.zip 与 moonflactag-local-cli-0.4.0.tgz。实际测试从解压包运行并离线安装/卸载 tgz，运行 PATH 排除 MoonBit，只需 Node；两种归档都只保存本地。zip 包附核心 LICENSE、项目 LICENSE、来源、示例与手册，不含工具链。Windows npm 生成入口在含 & 的安装前缀有上游兼容限制；自带入口已在该目录形式验证。
+本次授权为代码与软件包发布，不包含正式报名、个人信息表单或赛事官方审核。

@@ -1,14 +1,14 @@
 {
-  "material_date": "2026-10-22",
+  "material_date": "2026-10-23",
   "version": "0.4.0",
-  "archive": "local-moonflactag-0.4.0.zip",
+  "archive": "matrix486-moonflactag-0.4.0.zip",
   "file_count": 67,
-  "archive_bytes": 96624,
+  "archive_bytes": 96619,
   "consumers": {
     "wasm-gc": "Total tests: 2, passed: 2, failed: 0.",
     "js": "Total tests: 2, passed: 2, failed: 0."
   },
   "extracted_cli": "inspect, plan and batch plan passed",
   "distribution_exclusions": "passed",
-  "packaging_output": "Warning: 'repository' field is not set or empty in module manifest\nRunning moon check ...\nFinished. moon: no work to do\nCheck passed\nPackage to <project>\\_build\\publish\\local-moonflactag-0.4.0.zip"
+  "packaging_output": "Running moon check ...\nFinished. moon: no work to do\nCheck passed\nPackage to <project>\\_build\\publish\\matrix486-moonflactag-0.4.0.zip"
 }

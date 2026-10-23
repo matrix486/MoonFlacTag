@@ -1,12 +1,12 @@
 # MoonFlacTag 命令行使用手册
 
-本地版本 0.4.0。独立运行包只需要 Node.js 24 或更新版本，不需要 MoonBit、Python、FFmpeg 或联网。它编辑 FLAC 元数据并逐字节保留压缩音频，不转换音频编码。
+版本 0.4.0。独立运行包只需要 Node.js 24 或更新版本，不需要 MoonBit、Python、FFmpeg 或联网。它编辑 FLAC 元数据并逐字节保留压缩音频，不转换音频编码。
 
 ## 安装与启动
 
 开发者在源码目录运行 `python scripts/build_cli.py`，生成 `release-local/moonflactag-cli-0.4.0.zip` 和 `release-local/moonflactag-local-cli-0.4.0.tgz`，不会上传。
 
-普通用户解压 zip 到自己选择的目录，Windows 用包内的 `moonflactag.cmd`。以下命令假定当前位于解压目录：
+普通用户从 [GitHub Release](https://github.com/matrix486/MoonFlacTag/releases/tag/v0.4.0) 下载 zip 或 tgz，解压 zip 到自己选择的目录，Windows 用包内的 `moonflactag.cmd`。以下命令假定当前位于解压目录：
 
 ~~~powershell
 .\moonflactag.cmd --version

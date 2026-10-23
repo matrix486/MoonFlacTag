@@ -1,6 +1,6 @@
 # MoonFlacTag - FLAC 元数据与批量整理库
 
-0.4.0；2026-10-22；十月赛本地草稿。参赛者/GitHub ID、队员、仓库和 Mooncakes namespace 待指定。
+0.4.0；2026-10-23；十月赛申报材料。GitHub ID：matrix486；[本项目仓库](https://github.com/matrix486/MoonFlacTag)；模块 matrix486/moonflactag。未提供的队员与个人报名资料不猜填。
 
 面向音乐归档、媒体整理与上传工具：编辑标签和封面、批量预览与保存，逐字节保留原压缩音频，无需重新编码。
 
@@ -14,6 +14,6 @@ Wasm-GC / JS 各 31 测试（含 3 文档）、格式/check/build 通过；512 �
 
 MIT，生成素材和 AI 辅助范围明确。累计元数据 16 MiB/4096 块；不校验音频帧 CRC/MD5、不解码图片、不支持 Ogg-FLAC/ID3 前缀。保存要求硬链接支持；原子可见性不代表断电持久性。
 
-三分钟演示见 docs/demo.md，实际证据见 docs/acceptance-review.md；同一验收入口与 CI、维护者讲解已准备。本地源码、验证、材料就绪，尚未公开发布、线上 CI、注册表安装或正式报名。
+三分钟演示见 docs/demo.md，实际证据见 docs/acceptance-review.md；同一验收入口与 CI、维护者讲解已准备。源码、验证、材料就绪；按授权进行 GitHub/Mooncakes 发布，最终 CI 和 registry 消费证据见 docs/release.md。正式报名或审核未执行。
 
 规则依据保留 [官方十月赛源码](https://github.com/moonbitlang/Hackathon2026/blob/main/src/App.tsx)，格式参考 [RFC 9639 §8](https://www.rfc-editor.org/rfc/rfc9639.html)。

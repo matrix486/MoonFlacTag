@@ -8,7 +8,7 @@ import subprocess
 import sys
 import tempfile
 import zipfile
-from verify import ROOT, EVIDENCE, metadata
+from verify import ROOT, EVIDENCE, metadata, material_date
 
 
 def call(args, cwd, env):
@@ -62,7 +62,7 @@ def main():
         assert version in call([*command, "--version"], work, env).stdout.decode()
         call([npm, "uninstall", "--prefix", prefix, "moonflactag-local-cli", "--offline", "--ignore-scripts", "--no-audit", "--no-fund"], work, env)
         assert not shim.exists()
-    result = {"material_date": "2026-10-22", "version": version, "runtime": "Node.js only; MoonBit excluded from PATH", "portable_zip": "passed", "independent_unicode_space_directory": "passed", "tag_cover_export_report": "passed", "npm_offline_tgz_install_command_and_uninstall": "passed", "platform": sys.platform}
+    result = {"material_date": material_date(), "version": version, "runtime": "Node.js only; MoonBit excluded from PATH", "portable_zip": "passed", "independent_unicode_space_directory": "passed", "tag_cover_export_report": "passed", "npm_offline_tgz_install_command_and_uninstall": "passed", "platform": sys.platform}
     (EVIDENCE / "cli-distribution.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(result, indent=2))
 

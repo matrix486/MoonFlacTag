@@ -3,7 +3,7 @@ from pathlib import Path
 import json
 import subprocess
 import tempfile
-from verify import ROOT, OUT, EVIDENCE, cli, inspect, metadata, run
+from verify import ROOT, OUT, EVIDENCE, cli, inspect, metadata, run, material_date
 
 MAIN = ROOT / "_build/js/debug/build/cmd/main/main.js"
 
@@ -143,7 +143,7 @@ fs.linkSync = function(a,b) {
                 assert len(temps) == 1
                 temps[0].unlink()
         assert original.read_bytes() == source
-    result = {"material_date":"2026-10-22", "artwork":"PNG/JPEG headers, selective replacement, append, remove, exact export, legacy replacement passed",
+    result = {"material_date":material_date(), "artwork":"PNG/JPEG headers, selective replacement, append, remove, exact export, legacy replacement passed",
               "batch":"preview, recursion, stable ordering, partial failure, collisions, disjoint roots, empty directories passed",
               "symlinks":symlink_case, "structured_errors":True,
               "atomic_publication":{"destination_hidden_until_complete":True,"racing_destination_preserved":True,"publish_failure_cleanup":True,"forced_exit_leaves_no_destination":True},

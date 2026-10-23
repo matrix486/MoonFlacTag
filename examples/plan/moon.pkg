@@ -1,5 +1,5 @@
 import {
-  "local/moonflactag" @flac,
+  "matrix486/moonflactag" @flac,
   "moonbitlang/core/encoding/hex",
 }
 

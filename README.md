@@ -4,7 +4,7 @@
 
 ## 普通用户安装
 
-已有可直接使用的本地命令行包：解压 `release-local/moonflactag-cli-0.4.0.zip`，Windows 用其中的 `moonflactag.cmd`。只需 Node.js 24+，不需要 MoonBit、Python、FFmpeg 或联网。还提供本地离线 npm 安装包。完整安装、批量恢复和问题处理见 [命令行手册](docs/cli-guide.md)。
+从 [GitHub Release](https://github.com/matrix486/MoonFlacTag/releases/tag/v0.4.0) 下载并解压 `moonflactag-cli-0.4.0.zip`，Windows 用其中的 `moonflactag.cmd`。只需 Node.js 24+，不需要 MoonBit、Python、FFmpeg 或联网。还提供本地离线 npm 安装包。完整安装、批量恢复和问题处理见 [命令行手册](docs/cli-guide.md)。
 
 开发者重建独立运行包：`python scripts/build_cli.py`。下文保留从源码启动的开发者入口。
 
@@ -70,7 +70,13 @@ PNG/JPEG 头用于读取尺寸和色深，不解码像素或验证全部图片�
 
 ## 库 API
 
-本地模块名 local/moonflactag，公开发布目标待指定。通过 moon.work 工作区依赖导入。
+正式模块名 `matrix486/moonflactag`，发布版本 0.4.0。安装：
+
+~~~powershell
+moon add matrix486/moonflactag@0.4.0
+~~~
+
+包配置使用 `import { "matrix486/moonflactag" @flac }`。公开文档：[Mooncakes 0.4.0](https://mooncakes.io/docs/matrix486/moonflactag@0.4.0)。本地开发仍可通过 moon.work 依赖。
 
 - parse / Document.rewrite：完整 bytes 的内存接口。
 - Document.plan / plan_metadata / RewritePlan：只编码新元数据前缀，宿主复制原音频后缀。
@@ -101,7 +107,7 @@ python scripts/acceptance.py
 - 268439553 bytes 合成大文件、六类 I/O 注入、发布竞态和强制退出。
 - 性能基线测量源读取量、含启动的耗时和 Node 峰值 RSS。64 MiB 合成样本 inspect 只读 8333 bytes 元数据，非通用速度承诺。
 
-独立 CLI zip 在隔离路径运行并完成 npm tgz 离线安装/卸载；自动空间、批量进度/重跑和 UTF-8 报告也通过独立流程检查。记录在 docs/test-evidence。大型样本检查后删除，语料均为本地生成信号和独立元数据，不使用第三方录音。实际脚本与固定工具链 CI 已准备，CI 尚未在线运行。
+独立 CLI zip 在隔离路径运行并完成 npm tgz 离线安装/卸载；自动空间、批量进度/重跑和 UTF-8 报告也通过独立流程检查。记录在 docs/test-evidence。大型样本检查后删除，语料均为本地生成信号和独立元数据，不使用第三方录音。固定工具链 CI 结果见 [GitHub Actions](https://github.com/matrix486/MoonFlacTag/actions)。
 
 ## 边界与交付
 
@@ -109,4 +115,4 @@ python scripts/acceptance.py
 
 不验证音频帧 CRC / MD5，不解码图片，不支持 Ogg-FLAC / 前置 ID3。SEEKTABLE 检查顺序和占位符，但不核对目标帧；CUESHEET 内容保留为不透明 bytes。
 
-0.4.0，MIT，全部本地保存。见 [验收复核](docs/acceptance-review.md)、[架构](docs/architecture.md)、[维护说明](CONTRIBUTING.md)、[来源](THIRD_PARTY.md)。公开仓库、账号/namespace、线上 CI 和正式报名待相应发布阶段完成。
+0.4.0，MIT，GitHub owner 与发布账号为 matrix486。见 [验收复核](docs/acceptance-review.md)、[架构](docs/architecture.md)、[维护说明](CONTRIBUTING.md)、[来源](THIRD_PARTY.md)。公开仓库：[matrix486/MoonFlacTag](https://github.com/matrix486/MoonFlacTag)。发布状态与对应证据以 docs/release.md 为准；正式报名/审核仍需赛事方确认。

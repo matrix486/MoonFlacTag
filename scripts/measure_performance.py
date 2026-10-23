@@ -4,7 +4,7 @@ from pathlib import Path
 import subprocess
 import tempfile
 import time
-from verify import ROOT, OUT, EVIDENCE, metadata
+from verify import ROOT, OUT, EVIDENCE, metadata, material_date
 
 MAIN=ROOT/"_build/js/debug/build/cmd/main/main.js"
 
@@ -43,7 +43,7 @@ process.on('exit',()=>fs.writeFileSync(METRICS,JSON.stringify({source_bytes_read
             assert json.loads(p.stdout)["audio_offset"]==boundary
             rows.append({"operation":operation,"synthetic_file_bytes":size,"metadata_bytes":boundary,
                          "wall_seconds_including_node_startup":round(elapsed,6),**measured})
-    result={"material_date":"2026-10-22","runs":rows,
+    result={"material_date":material_date(),"runs":rows,
             "method":"One local instrumented run per operation; sparse synthetic suffix; timing includes Node startup and read counters. RSS is Node resourceUsage maxRSS, not a general performance guarantee."}
     (EVIDENCE/"performance-baseline.json").write_text(json.dumps(result,indent=2)+"\n",encoding="utf-8")
     print(json.dumps(result,indent=2))
